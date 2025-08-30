@@ -1,4 +1,4 @@
-# Notes on Go integration for Clichouse
+# Notes on Go integration for Clickhouse
 
 ## Create and test connection
 ```go
