@@ -510,3 +510,55 @@ value : 17
 time=2025-09-03T21:46:59.563-04:00 level=INFO source=/home/angel/Desktop/repos/digital-garden/go-test/test.go:119 msg="Hello, World! (text handler)"
 ```
 
+Slog receives a io.writer as destiny so you can write to a file too
+
+```go
+package main
+
+import (
+	"log"
+	"log/slog"
+	"os"
+)
+
+func main() {
+	logfile, err := os.OpenFile("log.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer logfile.Close()
+
+	logger := slog.New(slog.NewTextHandler(logfile, nil))
+
+	logger.Info("Hello, World!")
+
+}
+```
+
+or you can write to multiple destinies with io.MultiWriter
+
+```go
+package main
+
+import (
+	"io"
+	"log/slog"
+	"os"
+)
+
+func main() {
+	f, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	multi := io.MultiWriter(os.Stdout, f)
+
+	logger := slog.New(slog.NewJSONHandler(multi, nil))
+
+	logger.Info("server started", "port", 8080)
+	logger.Error("something failed", "err", "connection refused")
+
+}
+```
