@@ -562,3 +562,282 @@ func main() {
 
 }
 ```
+
+With this you can have multiple destinations, for example, handle logger s for errors, inf, warnings, etc.
+
+```go
+package main
+
+import (
+	"context"
+	"log"
+	"log/slog"
+	"os"
+	"time"
+)
+
+/*
+ * levelRangeHandler: A custom logging handler that acts as a "gatekeeper" or filter.
+ * It only allows log records within a specific level range [min..max] to pass through,
+ * then delegates the actual writing to a real handler (delegate).
+ *
+ * This pattern is useful for creating specialized log outputs where you want different
+ * log levels to go to different destinations (e.g., INFO to one file, WARN to another,
+ * ERROR+ to a third file).
+ *
+ * Performance consideration: This handler performs a quick level check before delegating,
+ * which prevents unnecessary work if the log level is outside the desired range.
+ */
+type levelRangeHandler struct {
+	min, max slog.Level   // Defines the inclusive range of log levels to accept
+	delegate slog.Handler // The actual handler that will write the log record
+}
+
+func (h *levelRangeHandler) Enabled(ctx context.Context, lvl slog.Level) bool {
+	// Fast level filtering: if the log level is outside our range, immediately reject it.
+	// This prevents unnecessary processing and improves performance.
+	if lvl < h.min || lvl > h.max {
+		return false
+	}
+	// If the level is within our range, check with the delegate handler.
+	// This respects the delegate's own level policy (e.g., its internal minimum level).
+	// This is important because the delegate might have its own filtering logic.
+	return h.delegate.Enabled(ctx, lvl)
+}
+
+func (h *levelRangeHandler) Handle(ctx context.Context, r slog.Record) error {
+	// Double-check the level range before processing the record.
+	// This is a safety check in case Enabled() wasn't called or the level changed.
+	if r.Level < h.min || r.Level > h.max {
+		return nil // Silently ignore records outside our range
+	}
+	// Delegate the actual handling to the wrapped handler.
+	// This is where the real work happens (formatting, writing to file/stdout, etc.)
+	return h.delegate.Handle(ctx, r)
+}
+
+func (h *levelRangeHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
+	// Creates a new handler with additional attributes while preserving the level filter.
+	// This is part of the slog.Handler interface and allows for attribute inheritance.
+	// The new handler will have the same level range but with additional attributes
+	// that will be included in all log records processed by this handler.
+	return &levelRangeHandler{
+		min:      h.min,
+		max:      h.max,
+		delegate: h.delegate.WithAttrs(attrs), // Propagate attributes to the delegate
+	}
+}
+
+func (h *levelRangeHandler) WithGroup(name string) slog.Handler {
+	// Creates a new handler with a group name while preserving the level filter.
+	// Groups in slog allow you to organize related attributes under a common namespace.
+	// For example, with group "http", attributes like "method" and "path" become "http.method" and "http.path".
+	// This maintains the same level filtering behavior while adding the group structure.
+	return &levelRangeHandler{
+		min:      h.min,
+		max:      h.max,
+		delegate: h.delegate.WithGroup(name), // Propagate group to the delegate
+	}
+}
+
+/*
+ * multiHandler: A fan-out handler that forwards each log record to multiple child handlers.
+ * This is useful when you want to send the same log to multiple destinations simultaneously
+ * (e.g., both to a file and to stdout, or to different files with different formats).
+ *
+ * Note: The Go standard library doesn't currently provide an official "multi" handler,
+ * so this is a minimal but sufficient implementation for most use cases.
+ *
+ * Performance consideration: This handler will call all child handlers even if some fail,
+ * which ensures maximum reliability but may impact performance with many handlers.
+ */
+type multiHandler struct{ children []slog.Handler }
+
+// Multi is a convenience helper to build a multiHandler in one call.
+// It takes a variadic list of handlers and returns a single handler that forwards to all of them.
+func Multi(hs ...slog.Handler) slog.Handler { return &multiHandler{children: hs} }
+
+func (m *multiHandler) Enabled(ctx context.Context, lvl slog.Level) bool {
+	// A log level is enabled if ANY of the child handlers would process it.
+	// This uses an OR logic: if at least one child handler wants to process the log,
+	// then the multi-handler should be enabled for that level.
+	// This ensures we don't miss logs that should go to at least one destination.
+	for _, h := range m.children {
+		if h.Enabled(ctx, lvl) {
+			return true
+		}
+	}
+	return false
+}
+
+func (m *multiHandler) Handle(ctx context.Context, r slog.Record) error {
+	var firstErr error
+	// Iterate through all child handlers and forward the log record to each one.
+	// We check Enabled() again here as a safety measure, even though it was already
+	// checked at the multi-handler level. This allows individual handlers to have
+	// their own filtering logic.
+	for _, h := range m.children {
+		if h.Enabled(ctx, r.Level) {
+			if err := h.Handle(ctx, r); err != nil && firstErr == nil {
+				// Capture the first error encountered, but continue processing other handlers.
+				// This ensures that if one handler fails, the others still get a chance to process the log.
+				// This is important for reliability: we don't want one broken handler to prevent
+				// logs from reaching other destinations.
+				firstErr = err
+			}
+		}
+	}
+	return firstErr
+}
+
+func (m *multiHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
+	// Create a new multi-handler where each child handler has the additional attributes.
+	// This ensures that when attributes are added to the multi-handler, they propagate
+	// to all child handlers, maintaining consistency across all destinations.
+	out := make([]slog.Handler, len(m.children))
+	for i, h := range m.children {
+		out[i] = h.WithAttrs(attrs) // Each child gets the new attributes
+	}
+	return &multiHandler{children: out}
+}
+
+func (m *multiHandler) WithGroup(name string) slog.Handler {
+	// Create a new multi-handler where each child handler has the group name applied.
+	// This ensures that when a group is added to the multi-handler, it propagates
+	// to all child handlers, maintaining consistent grouping across all destinations.
+	out := make([]slog.Handler, len(m.children))
+	for i, h := range m.children {
+		out[i] = h.WithGroup(name) // Each child gets the group name
+	}
+	return &multiHandler{children: out}
+}
+
+/*
+ * Helper functions for creating actual JSON handlers that write to stdout or files.
+ * These are the "real" handlers that do the actual work of formatting and writing logs.
+ *
+ * Performance note: We set a minimum level on the actual handler to avoid unnecessary work.
+ * This is a double optimization: the levelRangeHandler filters by range, and the underlying
+ * JSON handler filters by minimum level. This prevents the JSON handler from doing expensive
+ * formatting work for logs that would be filtered out anyway.
+ */
+
+func stdoutJSONHandler(minLevel slog.Level) slog.Handler {
+	// Creates a JSON handler that writes to stdout (standard output).
+	// This is useful for development and debugging, as logs will appear in the console.
+	// The minLevel parameter ensures that only logs at or above this level are processed.
+	return slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: minLevel})
+}
+
+func fileJSONHandler(path string, minLevel slog.Level) slog.Handler {
+	// Creates a JSON handler that writes to a file.
+	// The file is opened with specific flags:
+	// - os.O_CREATE: Create the file if it doesn't exist
+	// - os.O_WRONLY: Open for writing only
+	// - os.O_APPEND: Append to the file instead of overwriting (preserves existing logs)
+	// - 0o644: File permissions (owner can read/write, group and others can read)
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
+	if err != nil {
+		// If we can't open the log file, the application should fail fast.
+		// Logging is critical infrastructure, and if we can't log, we can't diagnose problems.
+		log.Fatalf("open %s: %v", path, err)
+	}
+	// Create a JSON handler that writes to the opened file.
+	// The minLevel parameter ensures efficient filtering at the handler level.
+	return slog.NewJSONHandler(f, &slog.HandlerOptions{Level: minLevel})
+}
+
+func main() {
+	// 1) Console destination: Show all logs >= INFO level in console (JSON format)
+	// This is useful for development and debugging, as logs will appear in the terminal.
+	stdout := stdoutJSONHandler(slog.LevelInfo)
+
+	// 2) File destinations by level: Separate files for different log levels
+	// This creates a sophisticated logging setup where different types of logs
+	// go to different files, making it easier to analyze specific types of events.
+
+	// INFO-only file: Only INFO level logs go to info.log
+	// This is useful for tracking normal application flow and important events.
+	infoFile := &levelRangeHandler{
+		min:      slog.LevelInfo,
+		max:      slog.LevelInfo,
+		delegate: fileJSONHandler("info.log", slog.LevelInfo),
+	}
+
+	// WARN-only file: Only WARN level logs go to warn.log
+	// This helps track potential issues that don't break functionality but should be monitored.
+	warnFile := &levelRangeHandler{
+		min:      slog.LevelWarn,
+		max:      slog.LevelWarn,
+		delegate: fileJSONHandler("warn.log", slog.LevelWarn),
+	}
+
+	// ERROR and above file: ERROR and higher levels go to error.log
+	// The max level is set to 127 (high value) to accommodate future custom levels like FATAL or CRITICAL.
+	// This ensures all error-related logs are captured in one place for easy debugging.
+	errorAndAboveFile := &levelRangeHandler{
+		min:      slog.LevelError,
+		max:      slog.Level(127), // High margin in case you add FATAL/CRITICAL levels later
+		delegate: fileJSONHandler("error.log", slog.LevelError),
+	}
+
+	// 3) Create a single Logger with fan-out to multiple destinations and common attributes
+	// The Multi() function combines all our handlers into one, so each log message
+	// will be sent to all appropriate destinations simultaneously.
+	// The With() method adds common attributes that will be included in every log record.
+	// This is useful for adding metadata like service name, environment, and version
+	// that should appear in all logs for easier filtering and analysis.
+	logger := slog.New(
+		Multi(stdout, infoFile, warnFile, errorAndAboveFile),
+	).With(
+		slog.String("service", "app"),   // Service identifier for log aggregation
+		slog.String("env", "dev"),       // Environment (dev/staging/prod) for context
+		slog.String("version", "1.0.0"), // Application version for debugging
+	)
+
+	// 4) Demonstration of the logging system with different scenarios
+
+	// DEBUG level log: This won't appear in stdout because our stdout handler
+	// is configured for INFO and above. However, it demonstrates the filtering behavior.
+	logger.Debug("debug event (won't print to stdout by default)") // Below INFO level
+
+	// INFO level log: This will appear in stdout and info.log
+	// It includes structured data (port number and timestamp) that will be formatted as JSON.
+	logger.Info("server started",
+		"port", 8080, // Server port for context
+		"ts", time.Now().UTC(), // Timestamp in UTC for consistency
+	)
+
+	// Create a specialized logger for HTTP requests with grouping and additional context
+	// WithGroup("http") creates a namespace for HTTP-related attributes
+	// With() adds specific attributes that will be included in all logs from this logger
+	httpLog := logger.WithGroup("http").With(
+		slog.String("method", "GET"),  // HTTP method
+		slog.String("path", "/users"), // Request path
+	)
+
+	// WARN level log: This will appear in stdout, warn.log, and info.log
+	// The grouping means the attributes will be structured as "http.method" and "http.path"
+	httpLog.Warn("slow request", "duration_ms", 820)
+
+	// Simulate a database error to demonstrate ERROR level logging
+	err := simulateDB()
+	if err != nil {
+		// ERROR level log: This will appear in stdout, error.log, and info.log
+		// It includes structured error information for debugging
+		logger.Error("db timeout",
+			"op", "SELECT", // Database operation that failed
+			"retryable", true, // Whether the operation can be retried
+			slog.String("error", err.Error()), // The actual error message
+		)
+	}
+}
+
+func simulateDB() error {
+	// Simulate a database timeout error for demonstration purposes.
+	// context.DeadlineExceeded is a standard Go error that represents a timeout condition.
+	// This is commonly used in database operations when a query takes too long to complete.
+	return context.DeadlineExceeded
+}
+
+```
