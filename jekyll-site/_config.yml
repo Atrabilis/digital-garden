@@ -1,0 +1,23 @@
+title: "Mi Digital Garden"
+description: "Notes on my studies and experiences in the engineering and technology field"
+baseurl: "/digital-garden"
+
+source: .
+destination: _site
+
+# Collections you migrated (adjust names if needed)
+collections:
+  go:
+    output: true
+    permalink: /go/:name/
+  networking:
+    output: true
+    permalink: /networking/:name/
+  good-practices:
+    output: true
+    permalink: /good-practices/:name/
+  misc:
+    output: true
+    permalink: /misc/:name/
+
+    

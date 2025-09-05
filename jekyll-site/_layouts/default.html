@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ page.title }} | {{ site.title }}</title>
+  <meta name="description" content="{{ site.description }}" />
+  <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/style.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <h2 class="site-title"><a href="{{ site.baseurl | default: '' }}/">{{ site.title }}</a></h2>
+    <p class="site-desc">{{ site.description }}</p>
+
+    <nav class="side-nav">
+      <h3>Collections</h3>
+      <ul>
+        {%- assign cols = site.collections | where_exp: "c", "c.label != 'posts'" -%}
+        {%- for c in cols %}
+          {%- assign label = c.label -%}
+          {%- assign docs = c.docs | sort: "title" -%}
+          <li class="collection">
+            <details>
+              <summary>
+                {%- if label contains '-' -%}
+                  {{ label }}
+                {%- else -%}
+                  {{ label | capitalize }}
+                {%- endif -%}
+                <span class="count">({{ docs | size }})</span>
+              </summary>
+              <ul class="doc-list">
+                {%- for d in docs %}
+                  <li>
+                    <a href="{{ d.url | relative_url }}">{{ d.title | default: d.name }}</a>
+                  </li>
+                {%- endfor %}
+              </ul>
+            </details>
+          </li>
+        {%- endfor %}
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="content">
+    {{ content }}
+  </main>
+</body>
+</html>
