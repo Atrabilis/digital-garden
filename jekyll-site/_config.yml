@@ -4,20 +4,13 @@ baseurl: "/digital-garden"
 
 source: .
 destination: _site
-
-# Collections you migrated (adjust names if needed)
 collections:
   go:
     output: true
     permalink: /go/:name/
-  networking:
-    output: true
-    permalink: /networking/:name/
   good-practices:
     output: true
     permalink: /good-practices/:name/
-  misc:
+  jekyll:
     output: true
-    permalink: /misc/:name/
-
-    
+    permalink: /jekyll/:name/
