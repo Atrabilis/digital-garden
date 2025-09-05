@@ -7,32 +7,38 @@
   <meta name="description" content="{{ site.description }}" />
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
 </head>
+
 <body>
   <aside class="sidebar">
-    <h2 class="site-title"><a href="{{ site.baseurl | default: '' }}/">{{ site.title }}</a></h2>
+    <h1 class="site-title">
+      <a href="{{ '/' | relative_url }}" class="site-title__link">{{ site.title }}</a>
+    </h1>
     <p class="site-desc">{{ site.description }}</p>
 
-    <nav class="side-nav">
-      <h3>Collections</h3>
-      <ul>
+    <nav class="side-nav" aria-label="Colecciones">
+      <h2 class="side-nav__heading">Collections</h2>
+      <ul class="side-nav__list">
         {%- assign cols = site.collections | where_exp: "c", "c.label != 'posts'" -%}
         {%- for c in cols %}
           {%- assign label = c.label -%}
           {%- assign docs = c.docs | sort: "title" -%}
           <li class="collection">
-            <details>
-              <summary>
-                {%- if label contains '-' -%}
-                  {{ label }}
-                {%- else -%}
-                  {{ label | capitalize }}
-                {%- endif -%}
-                <span class="count">({{ docs | size }})</span>
+            <details class="collection__details" {% if page.collection == label %}open{% endif %}>
+              <summary class="collection__summary">
+                <span class="collection__name">
+                  {%- if label contains '-' -%}
+                    {{ label }}
+                  {%- else -%}
+                    {{ label | capitalize }}
+                  {%- endif -%}
+                </span>
+                <span class="collection__count">({{ docs | size }})</span>
               </summary>
               <ul class="doc-list">
                 {%- for d in docs %}
-                  <li>
-                    <a href="{{ d.url | relative_url }}">{{ d.title | default: d.name }}</a>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link{% if d.url == page.url %} is-active{% endif %}"
+                       href="{{ d.url | relative_url }}">{{ d.title | default: d.name }}</a>
                   </li>
                 {%- endfor %}
               </ul>
@@ -41,10 +47,14 @@
         {%- endfor %}
       </ul>
     </nav>
+    <div class="sidebar-resizer"></div>
   </aside>
 
-  <main class="content">
+  <main class="content" id="content">
     {{ content }}
   </main>
 </body>
+
+<script src="{{ '/assets/js/sidebar-resize.js' | relative_url }}"></script>
+
 </html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Os | Mi Digital Garden</title>
+  <meta name="description" content="Notes on my studies and experiences in the engineering and technology field" />
+  <link rel="stylesheet" href="/digital-garden/assets/css/style.css">
+</head>
+
+<body>
+  <aside class="sidebar">
+    <h1 class="site-title">
+      <a href="/digital-garden/" class="site-title__link">Mi Digital Garden</a>
+    </h1>
+    <p class="site-desc">Notes on my studies and experiences in the engineering and technology field</p>
+
+    <nav class="side-nav" aria-label="Colecciones">
+      <h2 class="side-nav__heading">Collections</h2>
+      <ul class="side-nav__list"><li class="collection">
+            <details class="collection__details" open>
+              <summary class="collection__summary">
+                <span class="collection__name">Go</span>
+                <span class="collection__count">(5)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/clickhouse/">Clickhouse</a>
+                  </li>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/influxdb2/">Influxdb2</a>
+                  </li>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/lumberjack/">Lumberjack</a>
+                  </li>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link is-active"
+                       href="/digital-garden/go/os/">Os</a>
+                  </li>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/slog/">Slog</a>
+                  </li>
+              </ul>
+            </details>
+          </li><li class="collection">
+            <details class="collection__details" >
+              <summary class="collection__summary">
+                <span class="collection__name">good-practices</span>
+                <span class="collection__count">(1)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/good-practices/logging-system/">Logging system</a>
+                  </li>
+              </ul>
+            </details>
+          </li><li class="collection">
+            <details class="collection__details" >
+              <summary class="collection__summary">
+                <span class="collection__name">Jekyll</span>
+                <span class="collection__count">(1)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/jekyll/config-yml/">Config.yml</a>
+                  </li>
+              </ul>
+            </details>
+          </li><li class="collection">
+            <details class="collection__details" >
+              <summary class="collection__summary">
+                <span class="collection__name">Networking</span>
+                <span class="collection__count">(1)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/networking/wireguard/">Wireguard</a>
+                  </li>
+              </ul>
+            </details>
+          </li>
+      </ul>
+    </nav>
+    <div class="sidebar-resizer"></div>
+  </aside>
+
+  <main class="content" id="content">
+    <h1 id="notes-on-os-standar-module">Notes on os standar module</h1>
+
+<h1 id="flags-for-osopenfile-in-go">Flags for os.OpenFile in Go</h1>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">os.O_RDONLY</code><br />
+Open file read-only (default if no flag is specified).</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">os.O_WRONLY</code><br />
+Open file write-only.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">os.O_RDWR</code><br />
+Open file read-write.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">os.O_APPEND</code><br />
+Always write data at the end of the file.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">os.O_CREATE</code><br />
+Create a new file if it does not exist. Requires file mode (<code class="language-plaintext highlighter-rouge">perm</code>).</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">os.O_EXCL</code><br />
+Used with <code class="language-plaintext highlighter-rouge">O_CREATE</code>, makes the call fail if the file already exists.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">os.O_SYNC</code><br />
+Open for synchronous I/O — writes are flushed to stable storage before returning.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">os.O_TRUNC</code><br />
+If the file already exists and is opened for writing, truncate it to size 0.</p>
+  </li>
+</ul>
+
+<h2 id="verify-if-a-file-exists">Verify if a file exists</h2>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">info</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">os</span><span class="o">.</span><span class="n">Stat</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>            
+<span class="k">if</span> <span class="n">err</span> <span class="o">==</span> <span class="no">nil</span> <span class="p">{</span>
+    <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"file exists"</span><span class="p">)</span>
+<span class="p">}</span><span class="k">else</span> <span class="k">if</span> <span class="n">errors</span><span class="o">.</span><span class="n">Is</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">fs</span><span class="o">.</span><span class="n">ErrNotExist</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"file does not exists"</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">else</span><span class="p">{</span>
+    <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"another error"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="create-file">Create File</h2>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">f</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">os</span><span class="o">.</span><span class="n">OpenFile</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">O_CREATE</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">O_EXCL</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">O_WRONLY</span><span class="p">,</span> <span class="m">0644</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="n">f</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span> <span class="c">// ✅ ensures the file descriptor is released</span>
+
+<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s">"file created"</span><span class="p">)</span>
+</code></pre></div></div>
+
+  </main>
+</body>
+
+<script src="/digital-garden/assets/js/sidebar-resize.js"></script>
+
+</html>

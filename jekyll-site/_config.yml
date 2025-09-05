@@ -14,3 +14,10 @@ collections:
   jekyll:
     output: true
     permalink: /jekyll/:name/
+  networking:
+    output: true
+    permalink: /networking/:name/
+
+
+markdown: kramdown
+highlighter: rouge

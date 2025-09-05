@@ -1,3 +1,8 @@
+---
+title: "Config.yml"
+layout: default
+---
+
 {% raw %}
 # Jekyll Configuration Reference
 

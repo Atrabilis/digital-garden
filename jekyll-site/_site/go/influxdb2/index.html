@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Inicio | Mi Digital Garden</title>
+  <title>Influxdb2 | Mi Digital Garden</title>
   <meta name="description" content="Notes on my studies and experiences in the engineering and technology field" />
   <link rel="stylesheet" href="/digital-garden/assets/css/style.css">
 </head>
@@ -18,7 +18,7 @@
     <nav class="side-nav" aria-label="Colecciones">
       <h2 class="side-nav__heading">Collections</h2>
       <ul class="side-nav__list"><li class="collection">
-            <details class="collection__details" >
+            <details class="collection__details" open>
               <summary class="collection__summary">
                 <span class="collection__name">Go</span>
                 <span class="collection__count">(5)</span>
@@ -29,7 +29,7 @@
                        href="/digital-garden/go/clickhouse/">Clickhouse</a>
                   </li>
                   <li class="doc-list__item">
-                    <a class="doc-list__link"
+                    <a class="doc-list__link is-active"
                        href="/digital-garden/go/influxdb2/">Influxdb2</a>
                   </li>
                   <li class="doc-list__item">
@@ -92,16 +92,40 @@
   </aside>
 
   <main class="content" id="content">
-    <h1 id="bienvenido-a-mi-digital-garden-">Bienvenido a Mi Digital Garden 🌱</h1>
+    <h1 id="notes-on-influxdb2-integration-on-go">Notes on Influxdb2 integration on Go</h1>
 
-<p>Notes on my studies and experiences in the engineering and technology field</p>
+<h2 id="connect-to-influx">Connect to Influx</h2>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
-<h2 id="colecciones">Colecciones</h2>
-<p>A continuación un índice rápido de tus colecciones (primeros ítems):### go
--<a href="/digital-garden/go/clickhouse/">Clickhouse</a>, <a href="/digital-garden/go/influxdb2/">Influxdb2</a>, <a href="/digital-garden/go/lumberjack/">Lumberjack</a>, <a href="/digital-garden/go/os/">Os</a>, <a href="/digital-garden/go/slog/">Slog</a>### good-practices
--<a href="/digital-garden/good-practices/logging-system/">Logging system</a>### jekyll
--<a href="/digital-garden/jekyll/config-yml/">Config.yml</a>### networking
--<a href="/digital-garden/networking/wireguard/">Wireguard</a></p>
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"context"</span>
+	<span class="s">"fmt"</span>
+	<span class="s">"log"</span>
+	<span class="s">"os"</span>
+
+	<span class="n">influxdb2</span> <span class="s">"github.com/influxdata/influxdb-client-go/v2"</span>
+	<span class="n">dotenv</span> <span class="s">"github.com/joho/godotenv"</span>
+<span class="p">)</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c">//Load .env file within same directory</span>
+	<span class="n">err</span> <span class="o">:=</span> <span class="n">dotenv</span><span class="o">.</span><span class="n">Load</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"Error loading .env file: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c">//create client, url and token required</span>
+	<span class="n">client</span> <span class="o">:=</span> <span class="n">influxdb2</span><span class="o">.</span><span class="n">NewClient</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">Getenv</span><span class="p">(</span><span class="s">"INFLUX_URL"</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">Getenv</span><span class="p">(</span><span class="s">"INFLUX_TOKEN"</span><span class="p">))</span>
+
+    <span class="c">//Verify connection, does not verify credentials</span>
+	<span class="n">ping</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Ping</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">())</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"Error pinging InfluxDB: %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">ping</span><span class="p">)</span> <span class="c">//true in case of success,</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
 
   </main>
 </body>

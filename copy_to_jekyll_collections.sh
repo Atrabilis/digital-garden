@@ -5,7 +5,7 @@ set -euo pipefail
 # - Never modifies, deletes, or moves sources.
 # - Lowercases folder names and prefixes "_" for collection dirs.
 # - For .md: if missing front matter, it is added ONLY IN THE COPIED VERSION.
-# - If destination exists, the existing file is renamed to .bak, then the new file is written.
+# - Overwrites destination files (no .bak backups).
 # - DRY_RUN is disabled by default (this writes!). Set DRY_RUN=true to simulate.
 
 DRY_RUN=${DRY_RUN:-false}         # false = write changes; true = simulate
@@ -48,16 +48,10 @@ infer_title_from_filename() {
   printf "%s" "${base^}"
 }
 
-safe_backup_then_place() {
-  # place $2 at $1, backing up existing target first
+# Overwrite destination directly (no backups)
+place_overwriting() {
   local dst="$1"
   local prepared_src="$2"
-
-  if [[ -e "$dst" ]]; then
-    local bak="${dst}.bak"
-    log "  - Backup existing: $(basename "$dst") -> $(basename "$bak")"
-    run "mv \"$dst\" \"$bak\""
-  fi
   run "mkdir -p \"$(dirname "$dst")\""
   run "cp -a \"$prepared_src\" \"$dst\""
 }
@@ -82,7 +76,7 @@ copy_md_with_optional_front_matter() {
     } > "$tmp"
   fi
 
-  safe_backup_then_place "$dst_file" "$tmp"
+  place_overwriting "$dst_file" "$tmp"
   run "rm -f \"$tmp\""
 }
 
@@ -92,13 +86,16 @@ copy_one_file_preserving_structure() {
   local target_coll="$3" # absolute path to collection folder inside SITE_DIR
 
   local rel="${src_abs#$src_root/}"
-  local dirpart="$(dirname "$rel")"
-  local fname="$(basename "$src_abs")"
+  local dirpart
+  dirpart="$(dirname "$rel")"
+  local fname
+  fname="$(basename "$src_abs")"
 
   # lowercase name (keep extension)
   local name_noext="${fname%.*}"
   local ext="${fname##*.}"
-  local lower_name="$(echo "$name_noext" | tr '[:upper:]' '[:lower:]')"
+  local lower_name
+  lower_name="$(echo "$name_noext" | tr '[:upper:]' '[:lower:]')"
   local newname="${lower_name}.${ext}"
 
   local dst="$target_coll/$dirpart/$newname"
@@ -108,7 +105,7 @@ copy_one_file_preserving_structure() {
     copy_md_with_optional_front_matter "$src_abs" "$dst"
   else
     log "  -> ${rel}  =>  ${dst#$SITE_DIR/}"
-    safe_backup_then_place "$dst" "$src_abs"
+    place_overwriting "$dst" "$src_abs"
   fi
 }
 
@@ -159,11 +156,12 @@ for f in "$ROOT"/*.md; do
     continue
   fi
   # lowercase filename
-  name_noext="${base%.*}"
-  ext="${base##*.}"
+  local name_noext="${base%.*}"
+  local ext="${base##*.}"
+  local lower_name
   lower_name="$(echo "$name_noext" | tr '[:upper:]' '[:lower:]')"
-  newname="${lower_name}.${ext}"
-  dst="$SITE_DIR/$MISC_COLLECTION/$newname"
+  local newname="${lower_name}.${ext}"
+  local dst="$SITE_DIR/$MISC_COLLECTION/$newname"
   log "Root MD -> $MISC_COLLECTION: $base -> ${dst#$SITE_DIR/}"
   copy_md_with_optional_front_matter "$f" "$dst"
 done

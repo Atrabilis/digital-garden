@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Slog | Mi Digital Garden</title>
+  <meta name="description" content="Notes on my studies and experiences in the engineering and technology field" />
+  <link rel="stylesheet" href="/digital-garden/assets/css/style.css">
+</head>
+
+<body>
+  <aside class="sidebar">
+    <h1 class="site-title">
+      <a href="/digital-garden/" class="site-title__link">Mi Digital Garden</a>
+    </h1>
+    <p class="site-desc">Notes on my studies and experiences in the engineering and technology field</p>
+
+    <nav class="side-nav" aria-label="Colecciones">
+      <h2 class="side-nav__heading">Collections</h2>
+      <ul class="side-nav__list"><li class="collection">
+            <details class="collection__details" open>
+              <summary class="collection__summary">
+                <span class="collection__name">Go</span>
+                <span class="collection__count">(5)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/clickhouse/">Clickhouse</a>
+                  </li>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/influxdb2/">Influxdb2</a>
+                  </li>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/lumberjack/">Lumberjack</a>
+                  </li>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/os/">Os</a>
+                  </li>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link is-active"
+                       href="/digital-garden/go/slog/">Slog</a>
+                  </li>
+              </ul>
+            </details>
+          </li><li class="collection">
+            <details class="collection__details" >
+              <summary class="collection__summary">
+                <span class="collection__name">good-practices</span>
+                <span class="collection__count">(1)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/good-practices/logging-system/">Logging system</a>
+                  </li>
+              </ul>
+            </details>
+          </li><li class="collection">
+            <details class="collection__details" >
+              <summary class="collection__summary">
+                <span class="collection__name">Jekyll</span>
+                <span class="collection__count">(1)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/jekyll/config-yml/">Config.yml</a>
+                  </li>
+              </ul>
+            </details>
+          </li><li class="collection">
+            <details class="collection__details" >
+              <summary class="collection__summary">
+                <span class="collection__name">Networking</span>
+                <span class="collection__count">(1)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/networking/wireguard/">Wireguard</a>
+                  </li>
+              </ul>
+            </details>
+          </li>
+      </ul>
+    </nav>
+    <div class="sidebar-resizer"></div>
+  </aside>
+
+  <main class="content" id="content">
+    <h1 id="notes-on-slog">Notes on Slog</h1>
+
+<h2 id="example-script">Example script</h2>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"fmt"</span>
+	<span class="s">"log/slog"</span>
+	<span class="s">"os"</span>
+	<span class="s">"time"</span>
+<span class="p">)</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="c">// Log Levels explanation (with priority values):</span>
+	<span class="c">// DEBUG: -4 | INFO: 0 | WARN: 4 | ERROR: 8</span>
+	<span class="c">// Default handler level is INFO (so DEBUG is hidden unless Level &lt;= DEBUG)</span>
+
+	<span class="c">// Handler options</span>
+	<span class="n">options</span> <span class="o">:=</span> <span class="n">slog</span><span class="o">.</span><span class="n">HandlerOptions</span><span class="p">{</span>
+		<span class="n">Level</span><span class="o">:</span>     <span class="n">slog</span><span class="o">.</span><span class="n">LevelDebug</span><span class="p">,</span>
+		<span class="n">AddSource</span><span class="o">:</span> <span class="no">true</span><span class="p">,</span> <span class="c">// Add source file and line number to the log message</span>
+
+		<span class="c">// ReplaceAttr is called for EVERY attribute (time, level, msg, and your key/values).</span>
+		<span class="n">ReplaceAttr</span><span class="o">:</span> <span class="k">func</span><span class="p">(</span><span class="n">groups</span> <span class="p">[]</span><span class="kt">string</span><span class="p">,</span> <span class="n">a</span> <span class="n">slog</span><span class="o">.</span><span class="n">Attr</span><span class="p">)</span> <span class="n">slog</span><span class="o">.</span><span class="n">Attr</span> <span class="p">{</span>
+			<span class="c">// Debug output to observe what's being processed</span>
+			<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"&gt;&gt;&gt; ReplaceAttr invoked"</span><span class="p">)</span>
+			<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"groups:"</span><span class="p">,</span> <span class="n">groups</span><span class="p">)</span> <span class="c">// shows the active group stack, e.g. [] or [http] or [http request]</span>
+			<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"key   :"</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">Key</span><span class="p">)</span>
+			<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"value :"</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">Value</span><span class="p">)</span>
+
+			<span class="c">// Example 1: Modify specific attributes based on their key</span>
+			<span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">Key</span> <span class="o">==</span> <span class="s">"port"</span> <span class="p">{</span>
+				<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"   -&gt; 'port' detected, modifying value"</span><span class="p">)</span>
+				<span class="n">a</span><span class="o">.</span><span class="n">Value</span> <span class="o">=</span> <span class="n">slog</span><span class="o">.</span><span class="n">AnyValue</span><span class="p">(</span><span class="s">"Port has been modified"</span><span class="p">)</span>
+			<span class="p">}</span>
+
+			<span class="c">// Example 2: Pretty timestamp (rename 'time' -&gt; 'timestamp' with RFC3339Nano)</span>
+			<span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">Key</span> <span class="o">==</span> <span class="n">slog</span><span class="o">.</span><span class="n">TimeKey</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="n">slog</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s">"timestamp"</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">Value</span><span class="o">.</span><span class="n">Time</span><span class="p">()</span><span class="o">.</span><span class="n">UTC</span><span class="p">()</span><span class="o">.</span><span class="n">Format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">RFC3339Nano</span><span class="p">))</span>
+			<span class="p">}</span>
+
+			<span class="c">// Example 3: Rename "msg" -&gt; "message"</span>
+			<span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">Key</span> <span class="o">==</span> <span class="n">slog</span><span class="o">.</span><span class="n">MessageKey</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="n">slog</span><span class="o">.</span><span class="n">Attr</span><span class="p">{</span><span class="n">Key</span><span class="o">:</span> <span class="s">"message"</span><span class="p">,</span> <span class="n">Value</span><span class="o">:</span> <span class="n">a</span><span class="o">.</span><span class="n">Value</span><span class="p">}</span>
+			<span class="p">}</span>
+
+			<span class="c">// Return the (possibly modified) attribute</span>
+			<span class="k">return</span> <span class="n">a</span>
+		<span class="p">},</span>
+	<span class="p">}</span>
+
+	<span class="c">// JSON Logger</span>
+	<span class="n">loggerJSON</span> <span class="o">:=</span> <span class="n">slog</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="n">slog</span><span class="o">.</span><span class="n">NewJSONHandler</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">Stdout</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">options</span><span class="p">))</span>
+
+	<span class="c">// 0) Ungrouped logs (top-level attributes)</span>
+	<span class="n">loggerJSON</span><span class="o">.</span><span class="n">Info</span><span class="p">(</span><span class="s">"Server Started"</span><span class="p">,</span> <span class="s">"port"</span><span class="p">,</span> <span class="m">8080</span><span class="p">,</span> <span class="s">"host"</span><span class="p">,</span> <span class="s">"localhost"</span><span class="p">)</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"--------------------------------"</span><span class="p">)</span>
+	<span class="n">loggerJSON</span><span class="o">.</span><span class="n">Warn</span><span class="p">(</span><span class="s">"Server Warning"</span><span class="p">,</span> <span class="s">"port"</span><span class="p">,</span> <span class="m">8080</span><span class="p">,</span> <span class="s">"host"</span><span class="p">,</span> <span class="s">"localhost"</span><span class="p">)</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"--------------------------------"</span><span class="p">)</span>
+	<span class="n">loggerJSON</span><span class="o">.</span><span class="n">Debug</span><span class="p">(</span><span class="s">"Server Debug"</span><span class="p">,</span> <span class="s">"port"</span><span class="p">,</span> <span class="m">8080</span><span class="p">,</span> <span class="s">"host"</span><span class="p">,</span> <span class="s">"localhost"</span><span class="p">)</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"--------------------------------"</span><span class="p">)</span>
+	<span class="n">loggerJSON</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="s">"Server Crashed"</span><span class="p">,</span> <span class="s">"port"</span><span class="p">,</span> <span class="m">8080</span><span class="p">,</span> <span class="s">"host"</span><span class="p">,</span> <span class="s">"localhost"</span><span class="p">)</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"================================"</span><span class="p">)</span>
+
+	<span class="c">// 1) Single group: "http"</span>
+	<span class="n">httpLogger</span> <span class="o">:=</span> <span class="n">loggerJSON</span><span class="o">.</span><span class="n">WithGroup</span><span class="p">(</span><span class="s">"http"</span><span class="p">)</span>
+	<span class="n">httpLogger</span><span class="o">.</span><span class="n">Info</span><span class="p">(</span><span class="s">"request handled"</span><span class="p">,</span>
+		<span class="s">"method"</span><span class="p">,</span> <span class="s">"GET"</span><span class="p">,</span>
+		<span class="s">"path"</span><span class="p">,</span> <span class="s">"/healthz"</span><span class="p">,</span>
+		<span class="s">"status"</span><span class="p">,</span> <span class="m">200</span><span class="p">,</span>
+	<span class="p">)</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"================================"</span><span class="p">)</span>
+
+	<span class="c">// 2) Another single group: "serial"</span>
+	<span class="n">serialLogger</span> <span class="o">:=</span> <span class="n">loggerJSON</span><span class="o">.</span><span class="n">WithGroup</span><span class="p">(</span><span class="s">"serial"</span><span class="p">)</span>
+	<span class="n">serialLogger</span><span class="o">.</span><span class="n">Warn</span><span class="p">(</span><span class="s">"device warning"</span><span class="p">,</span>
+		<span class="s">"port"</span><span class="p">,</span> <span class="s">"ttyUSB0"</span><span class="p">,</span>
+		<span class="s">"baudrate"</span><span class="p">,</span> <span class="m">9600</span><span class="p">,</span>
+	<span class="p">)</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"================================"</span><span class="p">)</span>
+
+	<span class="c">// 3) Nested groups: http -&gt; request</span>
+	<span class="n">httpReqLogger</span> <span class="o">:=</span> <span class="n">loggerJSON</span><span class="o">.</span><span class="n">WithGroup</span><span class="p">(</span><span class="s">"http"</span><span class="p">)</span><span class="o">.</span><span class="n">WithGroup</span><span class="p">(</span><span class="s">"request"</span><span class="p">)</span>
+	<span class="n">httpReqLogger</span><span class="o">.</span><span class="n">Debug</span><span class="p">(</span><span class="s">"request details"</span><span class="p">,</span>
+		<span class="s">"id"</span><span class="p">,</span> <span class="s">"req-123"</span><span class="p">,</span>
+		<span class="s">"method"</span><span class="p">,</span> <span class="s">"POST"</span><span class="p">,</span>
+		<span class="s">"path"</span><span class="p">,</span> <span class="s">"/api/items"</span><span class="p">,</span>
+		<span class="s">"latency_ms"</span><span class="p">,</span> <span class="m">42</span><span class="p">,</span>
+	<span class="p">)</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"================================"</span><span class="p">)</span>
+
+	<span class="c">// 4) Sibling groups in a single log line using slog.Group(...)</span>
+	<span class="c">// This does NOT change the logger; it just adds grouped attributes to THIS log entry.</span>
+	<span class="n">loggerJSON</span><span class="o">.</span><span class="n">Info</span><span class="p">(</span><span class="s">"multiple groups example"</span><span class="p">,</span>
+		<span class="n">slog</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span><span class="s">"http"</span><span class="p">,</span>
+			<span class="n">slog</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s">"method"</span><span class="p">,</span> <span class="s">"PUT"</span><span class="p">),</span>
+			<span class="n">slog</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s">"path"</span><span class="p">,</span> <span class="s">"/api/users"</span><span class="p">),</span>
+			<span class="n">slog</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="s">"status"</span><span class="p">,</span> <span class="m">204</span><span class="p">),</span>
+		<span class="p">),</span>
+		<span class="n">slog</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span><span class="s">"serial"</span><span class="p">,</span>
+			<span class="n">slog</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s">"port"</span><span class="p">,</span> <span class="s">"ttyACM0"</span><span class="p">),</span>
+			<span class="n">slog</span><span class="o">.</span><span class="n">Int</span><span class="p">(</span><span class="s">"baudrate"</span><span class="p">,</span> <span class="m">115200</span><span class="p">),</span>
+		<span class="p">),</span>
+	<span class="p">)</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"================================"</span><span class="p">)</span>
+
+	<span class="c">// 5) Another domain: "db" group</span>
+	<span class="n">dbLogger</span> <span class="o">:=</span> <span class="n">loggerJSON</span><span class="o">.</span><span class="n">WithGroup</span><span class="p">(</span><span class="s">"db"</span><span class="p">)</span>
+	<span class="n">dbLogger</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="s">"query failed"</span><span class="p">,</span>
+		<span class="s">"query"</span><span class="p">,</span> <span class="s">"SELECT * FROM users WHERE id=$1"</span><span class="p">,</span>
+		<span class="s">"args"</span><span class="p">,</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="m">42</span><span class="p">},</span>
+		<span class="s">"rows"</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span>
+		<span class="s">"took_ms"</span><span class="p">,</span> <span class="m">17</span><span class="p">,</span>
+	<span class="p">)</span>
+
+	<span class="c">// 6) Text handler for human-readable output (dev convenience)</span>
+	<span class="n">loggerText</span> <span class="o">:=</span> <span class="n">slog</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="n">slog</span><span class="o">.</span><span class="n">NewTextHandler</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">Stdout</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">slog</span><span class="o">.</span><span class="n">HandlerOptions</span><span class="p">{</span>
+		<span class="n">Level</span><span class="o">:</span>     <span class="n">slog</span><span class="o">.</span><span class="n">LevelDebug</span><span class="p">,</span>
+		<span class="n">AddSource</span><span class="o">:</span> <span class="no">true</span><span class="p">,</span>
+	<span class="p">}))</span>
+	<span class="n">loggerText</span><span class="o">.</span><span class="n">Info</span><span class="p">(</span><span class="s">"Hello, World! (text handler)"</span><span class="p">)</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<h2 id="output">Output</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : time
+value : 2025-09-03 21:46:59.561898514 -0400 -04
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : level
+value : INFO
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : source
+value : &amp;{main.main /home/angel/Desktop/repos/digital-garden/go-test/test.go 54}
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : function
+value : main.main
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : file
+value : /home/angel/Desktop/repos/digital-garden/go-test/test.go
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : line
+value : 54
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : msg
+value : Server Started
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : port
+value : 8080
+   -&gt; 'port' detected, modifying value
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : host
+value : localhost
+{"timestamp":"2025-09-04T01:46:59.561898514Z","level":"INFO","source":{"function":"main.main","file":"/home/angel/Desktop/repos/digital-garden/go-test/test.go","line":54},"message":"Server Started","port":"Port has been modified","host":"localhost"}
+--------------------------------
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : time
+value : 2025-09-03 21:46:59.56243416 -0400 -04
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : level
+value : WARN
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : source
+value : &amp;{main.main /home/angel/Desktop/repos/digital-garden/go-test/test.go 56}
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : function
+value : main.main
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : file
+value : /home/angel/Desktop/repos/digital-garden/go-test/test.go
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : line
+value : 56
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : msg
+value : Server Warning
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : port
+value : 8080
+   -&gt; 'port' detected, modifying value
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : host
+value : localhost
+{"timestamp":"2025-09-04T01:46:59.56243416Z","level":"WARN","source":{"function":"main.main","file":"/home/angel/Desktop/repos/digital-garden/go-test/test.go","line":56},"message":"Server Warning","port":"Port has been modified","host":"localhost"}
+--------------------------------
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : time
+value : 2025-09-03 21:46:59.56256996 -0400 -04
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : level
+value : DEBUG
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : source
+value : &amp;{main.main /home/angel/Desktop/repos/digital-garden/go-test/test.go 58}
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : function
+value : main.main
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : file
+value : /home/angel/Desktop/repos/digital-garden/go-test/test.go
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : line
+value : 58
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : msg
+value : Server Debug
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : port
+value : 8080
+   -&gt; 'port' detected, modifying value
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : host
+value : localhost
+{"timestamp":"2025-09-04T01:46:59.56256996Z","level":"DEBUG","source":{"function":"main.main","file":"/home/angel/Desktop/repos/digital-garden/go-test/test.go","line":58},"message":"Server Debug","port":"Port has been modified","host":"localhost"}
+--------------------------------
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : time
+value : 2025-09-03 21:46:59.562706697 -0400 -04
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : level
+value : ERROR
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : source
+value : &amp;{main.main /home/angel/Desktop/repos/digital-garden/go-test/test.go 60}
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : function
+value : main.main
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : file
+value : /home/angel/Desktop/repos/digital-garden/go-test/test.go
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : line
+value : 60
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : msg
+value : Server Crashed
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : port
+value : 8080
+   -&gt; 'port' detected, modifying value
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : host
+value : localhost
+{"timestamp":"2025-09-04T01:46:59.562706697Z","level":"ERROR","source":{"function":"main.main","file":"/home/angel/Desktop/repos/digital-garden/go-test/test.go","line":60},"message":"Server Crashed","port":"Port has been modified","host":"localhost"}
+================================
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : time
+value : 2025-09-03 21:46:59.562846636 -0400 -04
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : level
+value : INFO
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : source
+value : &amp;{main.main /home/angel/Desktop/repos/digital-garden/go-test/test.go 65}
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : function
+value : main.main
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : file
+value : /home/angel/Desktop/repos/digital-garden/go-test/test.go
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : line
+value : 65
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : msg
+value : request handled
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [http]
+key   : method
+value : GET
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [http]
+key   : path
+value : /healthz
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [http]
+key   : status
+value : 200
+{"timestamp":"2025-09-04T01:46:59.562846636Z","level":"INFO","source":{"function":"main.main","file":"/home/angel/Desktop/repos/digital-garden/go-test/test.go","line":65},"message":"request handled","http":{"method":"GET","path":"/healthz","status":200}}
+================================
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : time
+value : 2025-09-03 21:46:59.56297918 -0400 -04
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : level
+value : WARN
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : source
+value : &amp;{main.main /home/angel/Desktop/repos/digital-garden/go-test/test.go 74}
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : function
+value : main.main
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : file
+value : /home/angel/Desktop/repos/digital-garden/go-test/test.go
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : line
+value : 74
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : msg
+value : device warning
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [serial]
+key   : port
+value : ttyUSB0
+   -&gt; 'port' detected, modifying value
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [serial]
+key   : baudrate
+value : 9600
+{"timestamp":"2025-09-04T01:46:59.56297918Z","level":"WARN","source":{"function":"main.main","file":"/home/angel/Desktop/repos/digital-garden/go-test/test.go","line":74},"message":"device warning","serial":{"port":"Port has been modified","baudrate":9600}}
+================================
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : time
+value : 2025-09-03 21:46:59.56311242 -0400 -04
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : level
+value : DEBUG
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : source
+value : &amp;{main.main /home/angel/Desktop/repos/digital-garden/go-test/test.go 82}
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : function
+value : main.main
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : file
+value : /home/angel/Desktop/repos/digital-garden/go-test/test.go
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : line
+value : 82
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : msg
+value : request details
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [http request]
+key   : id
+value : req-123
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [http request]
+key   : method
+value : POST
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [http request]
+key   : path
+value : /api/items
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [http request]
+key   : latency_ms
+value : 42
+{"timestamp":"2025-09-04T01:46:59.56311242Z","level":"DEBUG","source":{"function":"main.main","file":"/home/angel/Desktop/repos/digital-garden/go-test/test.go","line":82},"message":"request details","http":{"request":{"id":"req-123","method":"POST","path":"/api/items","latency_ms":42}}}
+================================
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : time
+value : 2025-09-03 21:46:59.563261676 -0400 -04
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : level
+value : INFO
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : source
+value : &amp;{main.main /home/angel/Desktop/repos/digital-garden/go-test/test.go 92}
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : function
+value : main.main
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : file
+value : /home/angel/Desktop/repos/digital-garden/go-test/test.go
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : line
+value : 92
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : msg
+value : multiple groups example
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [http]
+key   : method
+value : PUT
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [http]
+key   : path
+value : /api/users
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [http]
+key   : status
+value : 204
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [serial]
+key   : port
+value : ttyACM0
+   -&gt; 'port' detected, modifying value
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [serial]
+key   : baudrate
+value : 115200
+{"timestamp":"2025-09-04T01:46:59.563261676Z","level":"INFO","source":{"function":"main.main","file":"/home/angel/Desktop/repos/digital-garden/go-test/test.go","line":92},"message":"multiple groups example","http":{"method":"PUT","path":"/api/users","status":204},"serial":{"port":"Port has been modified","baudrate":115200}}
+================================
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : time
+value : 2025-09-03 21:46:59.563427857 -0400 -04
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : level
+value : ERROR
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : source
+value : &amp;{main.main /home/angel/Desktop/repos/digital-garden/go-test/test.go 107}
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : function
+value : main.main
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : file
+value : /home/angel/Desktop/repos/digital-garden/go-test/test.go
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : line
+value : 107
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: []
+key   : msg
+value : query failed
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [db]
+key   : query
+value : SELECT * FROM users WHERE id=$1
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [db]
+key   : args
+value : [42]
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [db]
+key   : rows
+value : 0
+&gt;&gt;&gt; ReplaceAttr invoked
+groups: [db]
+key   : took_ms
+value : 17
+{"timestamp":"2025-09-04T01:46:59.563427857Z","level":"ERROR","source":{"function":"main.main","file":"/home/angel/Desktop/repos/digital-garden/go-test/test.go","line":107},"message":"query failed","db":{"query":"SELECT * FROM users WHERE id=$1","args":[42],"rows":0,"took_ms":17}}
+time=2025-09-03T21:46:59.563-04:00 level=INFO source=/home/angel/Desktop/repos/digital-garden/go-test/test.go:119 msg="Hello, World! (text handler)"
+</code></pre></div></div>
+
+<p>Slog receives a io.writer as destiny so you can write to a file too</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"log"</span>
+	<span class="s">"log/slog"</span>
+	<span class="s">"os"</span>
+<span class="p">)</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">logfile</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">os</span><span class="o">.</span><span class="n">OpenFile</span><span class="p">(</span><span class="s">"log.txt"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">O_CREATE</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">O_WRONLY</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">O_APPEND</span><span class="p">,</span> <span class="m">0644</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">defer</span> <span class="n">logfile</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+
+	<span class="n">logger</span> <span class="o">:=</span> <span class="n">slog</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="n">slog</span><span class="o">.</span><span class="n">NewTextHandler</span><span class="p">(</span><span class="n">logfile</span><span class="p">,</span> <span class="no">nil</span><span class="p">))</span>
+
+	<span class="n">logger</span><span class="o">.</span><span class="n">Info</span><span class="p">(</span><span class="s">"Hello, World!"</span><span class="p">)</span>
+
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>or you can write to multiple destinies with io.MultiWriter</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"io"</span>
+	<span class="s">"log/slog"</span>
+	<span class="s">"os"</span>
+<span class="p">)</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">f</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">os</span><span class="o">.</span><span class="n">OpenFile</span><span class="p">(</span><span class="s">"app.log"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">O_CREATE</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">O_WRONLY</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">O_APPEND</span><span class="p">,</span> <span class="m">0644</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">defer</span> <span class="n">f</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+
+	<span class="n">multi</span> <span class="o">:=</span> <span class="n">io</span><span class="o">.</span><span class="n">MultiWriter</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">Stdout</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+	<span class="n">logger</span> <span class="o">:=</span> <span class="n">slog</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="n">slog</span><span class="o">.</span><span class="n">NewJSONHandler</span><span class="p">(</span><span class="n">multi</span><span class="p">,</span> <span class="no">nil</span><span class="p">))</span>
+
+	<span class="n">logger</span><span class="o">.</span><span class="n">Info</span><span class="p">(</span><span class="s">"server started"</span><span class="p">,</span> <span class="s">"port"</span><span class="p">,</span> <span class="m">8080</span><span class="p">)</span>
+	<span class="n">logger</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="s">"something failed"</span><span class="p">,</span> <span class="s">"err"</span><span class="p">,</span> <span class="s">"connection refused"</span><span class="p">)</span>
+
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>With this you can have multiple destinations, for example, handle logger s for errors, inf, warnings, etc.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"context"</span>
+	<span class="s">"log"</span>
+	<span class="s">"log/slog"</span>
+	<span class="s">"os"</span>
+	<span class="s">"time"</span>
+<span class="p">)</span>
+
+<span class="c">/*
+ * levelRangeHandler: A custom logging handler that acts as a "gatekeeper" or filter.
+ * It only allows log records within a specific level range [min..max] to pass through,
+ * then delegates the actual writing to a real handler (delegate).
+ *
+ * This pattern is useful for creating specialized log outputs where you want different
+ * log levels to go to different destinations (e.g., INFO to one file, WARN to another,
+ * ERROR+ to a third file).
+ *
+ * Performance consideration: This handler performs a quick level check before delegating,
+ * which prevents unnecessary work if the log level is outside the desired range.
+ */</span>
+<span class="k">type</span> <span class="n">levelRangeHandler</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">min</span><span class="p">,</span> <span class="n">max</span> <span class="n">slog</span><span class="o">.</span><span class="n">Level</span>   <span class="c">// Defines the inclusive range of log levels to accept</span>
+	<span class="n">delegate</span> <span class="n">slog</span><span class="o">.</span><span class="n">Handler</span> <span class="c">// The actual handler that will write the log record</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span><span class="n">levelRangeHandler</span><span class="p">)</span> <span class="n">Enabled</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">lvl</span> <span class="n">slog</span><span class="o">.</span><span class="n">Level</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="c">// Fast level filtering: if the log level is outside our range, immediately reject it.</span>
+	<span class="c">// This prevents unnecessary processing and improves performance.</span>
+	<span class="k">if</span> <span class="n">lvl</span> <span class="o">&lt;</span> <span class="n">h</span><span class="o">.</span><span class="n">min</span> <span class="o">||</span> <span class="n">lvl</span> <span class="o">&gt;</span> <span class="n">h</span><span class="o">.</span><span class="n">max</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="no">false</span>
+	<span class="p">}</span>
+	<span class="c">// If the level is within our range, check with the delegate handler.</span>
+	<span class="c">// This respects the delegate's own level policy (e.g., its internal minimum level).</span>
+	<span class="c">// This is important because the delegate might have its own filtering logic.</span>
+	<span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">delegate</span><span class="o">.</span><span class="n">Enabled</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">lvl</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span><span class="n">levelRangeHandler</span><span class="p">)</span> <span class="n">Handle</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">r</span> <span class="n">slog</span><span class="o">.</span><span class="n">Record</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="c">// Double-check the level range before processing the record.</span>
+	<span class="c">// This is a safety check in case Enabled() wasn't called or the level changed.</span>
+	<span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">Level</span> <span class="o">&lt;</span> <span class="n">h</span><span class="o">.</span><span class="n">min</span> <span class="o">||</span> <span class="n">r</span><span class="o">.</span><span class="n">Level</span> <span class="o">&gt;</span> <span class="n">h</span><span class="o">.</span><span class="n">max</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="no">nil</span> <span class="c">// Silently ignore records outside our range</span>
+	<span class="p">}</span>
+	<span class="c">// Delegate the actual handling to the wrapped handler.</span>
+	<span class="c">// This is where the real work happens (formatting, writing to file/stdout, etc.)</span>
+	<span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">delegate</span><span class="o">.</span><span class="n">Handle</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span><span class="n">levelRangeHandler</span><span class="p">)</span> <span class="n">WithAttrs</span><span class="p">(</span><span class="n">attrs</span> <span class="p">[]</span><span class="n">slog</span><span class="o">.</span><span class="n">Attr</span><span class="p">)</span> <span class="n">slog</span><span class="o">.</span><span class="n">Handler</span> <span class="p">{</span>
+	<span class="c">// Creates a new handler with additional attributes while preserving the level filter.</span>
+	<span class="c">// This is part of the slog.Handler interface and allows for attribute inheritance.</span>
+	<span class="c">// The new handler will have the same level range but with additional attributes</span>
+	<span class="c">// that will be included in all log records processed by this handler.</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="n">levelRangeHandler</span><span class="p">{</span>
+		<span class="n">min</span><span class="o">:</span>      <span class="n">h</span><span class="o">.</span><span class="n">min</span><span class="p">,</span>
+		<span class="n">max</span><span class="o">:</span>      <span class="n">h</span><span class="o">.</span><span class="n">max</span><span class="p">,</span>
+		<span class="n">delegate</span><span class="o">:</span> <span class="n">h</span><span class="o">.</span><span class="n">delegate</span><span class="o">.</span><span class="n">WithAttrs</span><span class="p">(</span><span class="n">attrs</span><span class="p">),</span> <span class="c">// Propagate attributes to the delegate</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span><span class="n">levelRangeHandler</span><span class="p">)</span> <span class="n">WithGroup</span><span class="p">(</span><span class="n">name</span> <span class="kt">string</span><span class="p">)</span> <span class="n">slog</span><span class="o">.</span><span class="n">Handler</span> <span class="p">{</span>
+	<span class="c">// Creates a new handler with a group name while preserving the level filter.</span>
+	<span class="c">// Groups in slog allow you to organize related attributes under a common namespace.</span>
+	<span class="c">// For example, with group "http", attributes like "method" and "path" become "http.method" and "http.path".</span>
+	<span class="c">// This maintains the same level filtering behavior while adding the group structure.</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="n">levelRangeHandler</span><span class="p">{</span>
+		<span class="n">min</span><span class="o">:</span>      <span class="n">h</span><span class="o">.</span><span class="n">min</span><span class="p">,</span>
+		<span class="n">max</span><span class="o">:</span>      <span class="n">h</span><span class="o">.</span><span class="n">max</span><span class="p">,</span>
+		<span class="n">delegate</span><span class="o">:</span> <span class="n">h</span><span class="o">.</span><span class="n">delegate</span><span class="o">.</span><span class="n">WithGroup</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="c">// Propagate group to the delegate</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c">/*
+ * multiHandler: A fan-out handler that forwards each log record to multiple child handlers.
+ * This is useful when you want to send the same log to multiple destinations simultaneously
+ * (e.g., both to a file and to stdout, or to different files with different formats).
+ *
+ * Note: The Go standard library doesn't currently provide an official "multi" handler,
+ * so this is a minimal but sufficient implementation for most use cases.
+ *
+ * Performance consideration: This handler will call all child handlers even if some fail,
+ * which ensures maximum reliability but may impact performance with many handlers.
+ */</span>
+<span class="k">type</span> <span class="n">multiHandler</span> <span class="k">struct</span><span class="p">{</span> <span class="n">children</span> <span class="p">[]</span><span class="n">slog</span><span class="o">.</span><span class="n">Handler</span> <span class="p">}</span>
+
+<span class="c">// Multi is a convenience helper to build a multiHandler in one call.</span>
+<span class="c">// It takes a variadic list of handlers and returns a single handler that forwards to all of them.</span>
+<span class="k">func</span> <span class="n">Multi</span><span class="p">(</span><span class="n">hs</span> <span class="o">...</span><span class="n">slog</span><span class="o">.</span><span class="n">Handler</span><span class="p">)</span> <span class="n">slog</span><span class="o">.</span><span class="n">Handler</span> <span class="p">{</span> <span class="k">return</span> <span class="o">&amp;</span><span class="n">multiHandler</span><span class="p">{</span><span class="n">children</span><span class="o">:</span> <span class="n">hs</span><span class="p">}</span> <span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">m</span> <span class="o">*</span><span class="n">multiHandler</span><span class="p">)</span> <span class="n">Enabled</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">lvl</span> <span class="n">slog</span><span class="o">.</span><span class="n">Level</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+	<span class="c">// A log level is enabled if ANY of the child handlers would process it.</span>
+	<span class="c">// This uses an OR logic: if at least one child handler wants to process the log,</span>
+	<span class="c">// then the multi-handler should be enabled for that level.</span>
+	<span class="c">// This ensures we don't miss logs that should go to at least one destination.</span>
+	<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">h</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">m</span><span class="o">.</span><span class="n">children</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">Enabled</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">lvl</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="no">true</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="no">false</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">m</span> <span class="o">*</span><span class="n">multiHandler</span><span class="p">)</span> <span class="n">Handle</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">r</span> <span class="n">slog</span><span class="o">.</span><span class="n">Record</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="k">var</span> <span class="n">firstErr</span> <span class="kt">error</span>
+	<span class="c">// Iterate through all child handlers and forward the log record to each one.</span>
+	<span class="c">// We check Enabled() again here as a safety measure, even though it was already</span>
+	<span class="c">// checked at the multi-handler level. This allows individual handlers to have</span>
+	<span class="c">// their own filtering logic.</span>
+	<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">h</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">m</span><span class="o">.</span><span class="n">children</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">Enabled</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">Level</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">h</span><span class="o">.</span><span class="n">Handle</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">r</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="o">&amp;&amp;</span> <span class="n">firstErr</span> <span class="o">==</span> <span class="no">nil</span> <span class="p">{</span>
+				<span class="c">// Capture the first error encountered, but continue processing other handlers.</span>
+				<span class="c">// This ensures that if one handler fails, the others still get a chance to process the log.</span>
+				<span class="c">// This is important for reliability: we don't want one broken handler to prevent</span>
+				<span class="c">// logs from reaching other destinations.</span>
+				<span class="n">firstErr</span> <span class="o">=</span> <span class="n">err</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">firstErr</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">m</span> <span class="o">*</span><span class="n">multiHandler</span><span class="p">)</span> <span class="n">WithAttrs</span><span class="p">(</span><span class="n">attrs</span> <span class="p">[]</span><span class="n">slog</span><span class="o">.</span><span class="n">Attr</span><span class="p">)</span> <span class="n">slog</span><span class="o">.</span><span class="n">Handler</span> <span class="p">{</span>
+	<span class="c">// Create a new multi-handler where each child handler has the additional attributes.</span>
+	<span class="c">// This ensures that when attributes are added to the multi-handler, they propagate</span>
+	<span class="c">// to all child handlers, maintaining consistency across all destinations.</span>
+	<span class="n">out</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="n">slog</span><span class="o">.</span><span class="n">Handler</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">children</span><span class="p">))</span>
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">h</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">m</span><span class="o">.</span><span class="n">children</span> <span class="p">{</span>
+		<span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">WithAttrs</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span> <span class="c">// Each child gets the new attributes</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="n">multiHandler</span><span class="p">{</span><span class="n">children</span><span class="o">:</span> <span class="n">out</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">m</span> <span class="o">*</span><span class="n">multiHandler</span><span class="p">)</span> <span class="n">WithGroup</span><span class="p">(</span><span class="n">name</span> <span class="kt">string</span><span class="p">)</span> <span class="n">slog</span><span class="o">.</span><span class="n">Handler</span> <span class="p">{</span>
+	<span class="c">// Create a new multi-handler where each child handler has the group name applied.</span>
+	<span class="c">// This ensures that when a group is added to the multi-handler, it propagates</span>
+	<span class="c">// to all child handlers, maintaining consistent grouping across all destinations.</span>
+	<span class="n">out</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="n">slog</span><span class="o">.</span><span class="n">Handler</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">children</span><span class="p">))</span>
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">h</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">m</span><span class="o">.</span><span class="n">children</span> <span class="p">{</span>
+		<span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">WithGroup</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="c">// Each child gets the group name</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="o">&amp;</span><span class="n">multiHandler</span><span class="p">{</span><span class="n">children</span><span class="o">:</span> <span class="n">out</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c">/*
+ * Helper functions for creating actual JSON handlers that write to stdout or files.
+ * These are the "real" handlers that do the actual work of formatting and writing logs.
+ *
+ * Performance note: We set a minimum level on the actual handler to avoid unnecessary work.
+ * This is a double optimization: the levelRangeHandler filters by range, and the underlying
+ * JSON handler filters by minimum level. This prevents the JSON handler from doing expensive
+ * formatting work for logs that would be filtered out anyway.
+ */</span>
+
+<span class="k">func</span> <span class="n">stdoutJSONHandler</span><span class="p">(</span><span class="n">minLevel</span> <span class="n">slog</span><span class="o">.</span><span class="n">Level</span><span class="p">)</span> <span class="n">slog</span><span class="o">.</span><span class="n">Handler</span> <span class="p">{</span>
+	<span class="c">// Creates a JSON handler that writes to stdout (standard output).</span>
+	<span class="c">// This is useful for development and debugging, as logs will appear in the console.</span>
+	<span class="c">// The minLevel parameter ensures that only logs at or above this level are processed.</span>
+	<span class="k">return</span> <span class="n">slog</span><span class="o">.</span><span class="n">NewJSONHandler</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">Stdout</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">slog</span><span class="o">.</span><span class="n">HandlerOptions</span><span class="p">{</span><span class="n">Level</span><span class="o">:</span> <span class="n">minLevel</span><span class="p">})</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">fileJSONHandler</span><span class="p">(</span><span class="n">path</span> <span class="kt">string</span><span class="p">,</span> <span class="n">minLevel</span> <span class="n">slog</span><span class="o">.</span><span class="n">Level</span><span class="p">)</span> <span class="n">slog</span><span class="o">.</span><span class="n">Handler</span> <span class="p">{</span>
+	<span class="c">// Creates a JSON handler that writes to a file.</span>
+	<span class="c">// The file is opened with specific flags:</span>
+	<span class="c">// - os.O_CREATE: Create the file if it doesn't exist</span>
+	<span class="c">// - os.O_WRONLY: Open for writing only</span>
+	<span class="c">// - os.O_APPEND: Append to the file instead of overwriting (preserves existing logs)</span>
+	<span class="c">// - 0o644: File permissions (owner can read/write, group and others can read)</span>
+	<span class="n">f</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">os</span><span class="o">.</span><span class="n">OpenFile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">O_CREATE</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">O_WRONLY</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">O_APPEND</span><span class="p">,</span> <span class="m">0</span><span class="n">o644</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="c">// If we can't open the log file, the application should fail fast.</span>
+		<span class="c">// Logging is critical infrastructure, and if we can't log, we can't diagnose problems.</span>
+		<span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"open %s: %v"</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="c">// Create a JSON handler that writes to the opened file.</span>
+	<span class="c">// The minLevel parameter ensures efficient filtering at the handler level.</span>
+	<span class="k">return</span> <span class="n">slog</span><span class="o">.</span><span class="n">NewJSONHandler</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">slog</span><span class="o">.</span><span class="n">HandlerOptions</span><span class="p">{</span><span class="n">Level</span><span class="o">:</span> <span class="n">minLevel</span><span class="p">})</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c">// 1) Console destination: Show all logs &gt;= INFO level in console (JSON format)</span>
+	<span class="c">// This is useful for development and debugging, as logs will appear in the terminal.</span>
+	<span class="n">stdout</span> <span class="o">:=</span> <span class="n">stdoutJSONHandler</span><span class="p">(</span><span class="n">slog</span><span class="o">.</span><span class="n">LevelInfo</span><span class="p">)</span>
+
+	<span class="c">// 2) File destinations by level: Separate files for different log levels</span>
+	<span class="c">// This creates a sophisticated logging setup where different types of logs</span>
+	<span class="c">// go to different files, making it easier to analyze specific types of events.</span>
+
+	<span class="c">// INFO-only file: Only INFO level logs go to info.log</span>
+	<span class="c">// This is useful for tracking normal application flow and important events.</span>
+	<span class="n">infoFile</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">levelRangeHandler</span><span class="p">{</span>
+		<span class="n">min</span><span class="o">:</span>      <span class="n">slog</span><span class="o">.</span><span class="n">LevelInfo</span><span class="p">,</span>
+		<span class="n">max</span><span class="o">:</span>      <span class="n">slog</span><span class="o">.</span><span class="n">LevelInfo</span><span class="p">,</span>
+		<span class="n">delegate</span><span class="o">:</span> <span class="n">fileJSONHandler</span><span class="p">(</span><span class="s">"info.log"</span><span class="p">,</span> <span class="n">slog</span><span class="o">.</span><span class="n">LevelInfo</span><span class="p">),</span>
+	<span class="p">}</span>
+
+	<span class="c">// WARN-only file: Only WARN level logs go to warn.log</span>
+	<span class="c">// This helps track potential issues that don't break functionality but should be monitored.</span>
+	<span class="n">warnFile</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">levelRangeHandler</span><span class="p">{</span>
+		<span class="n">min</span><span class="o">:</span>      <span class="n">slog</span><span class="o">.</span><span class="n">LevelWarn</span><span class="p">,</span>
+		<span class="n">max</span><span class="o">:</span>      <span class="n">slog</span><span class="o">.</span><span class="n">LevelWarn</span><span class="p">,</span>
+		<span class="n">delegate</span><span class="o">:</span> <span class="n">fileJSONHandler</span><span class="p">(</span><span class="s">"warn.log"</span><span class="p">,</span> <span class="n">slog</span><span class="o">.</span><span class="n">LevelWarn</span><span class="p">),</span>
+	<span class="p">}</span>
+
+	<span class="c">// ERROR and above file: ERROR and higher levels go to error.log</span>
+	<span class="c">// The max level is set to 127 (high value) to accommodate future custom levels like FATAL or CRITICAL.</span>
+	<span class="c">// This ensures all error-related logs are captured in one place for easy debugging.</span>
+	<span class="n">errorAndAboveFile</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">levelRangeHandler</span><span class="p">{</span>
+		<span class="n">min</span><span class="o">:</span>      <span class="n">slog</span><span class="o">.</span><span class="n">LevelError</span><span class="p">,</span>
+		<span class="n">max</span><span class="o">:</span>      <span class="n">slog</span><span class="o">.</span><span class="n">Level</span><span class="p">(</span><span class="m">127</span><span class="p">),</span> <span class="c">// High margin in case you add FATAL/CRITICAL levels later</span>
+		<span class="n">delegate</span><span class="o">:</span> <span class="n">fileJSONHandler</span><span class="p">(</span><span class="s">"error.log"</span><span class="p">,</span> <span class="n">slog</span><span class="o">.</span><span class="n">LevelError</span><span class="p">),</span>
+	<span class="p">}</span>
+
+	<span class="c">// 3) Create a single Logger with fan-out to multiple destinations and common attributes</span>
+	<span class="c">// The Multi() function combines all our handlers into one, so each log message</span>
+	<span class="c">// will be sent to all appropriate destinations simultaneously.</span>
+	<span class="c">// The With() method adds common attributes that will be included in every log record.</span>
+	<span class="c">// This is useful for adding metadata like service name, environment, and version</span>
+	<span class="c">// that should appear in all logs for easier filtering and analysis.</span>
+	<span class="n">logger</span> <span class="o">:=</span> <span class="n">slog</span><span class="o">.</span><span class="n">New</span><span class="p">(</span>
+		<span class="n">Multi</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="n">infoFile</span><span class="p">,</span> <span class="n">warnFile</span><span class="p">,</span> <span class="n">errorAndAboveFile</span><span class="p">),</span>
+	<span class="p">)</span><span class="o">.</span><span class="n">With</span><span class="p">(</span>
+		<span class="n">slog</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s">"service"</span><span class="p">,</span> <span class="s">"app"</span><span class="p">),</span>   <span class="c">// Service identifier for log aggregation</span>
+		<span class="n">slog</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s">"env"</span><span class="p">,</span> <span class="s">"dev"</span><span class="p">),</span>       <span class="c">// Environment (dev/staging/prod) for context</span>
+		<span class="n">slog</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s">"version"</span><span class="p">,</span> <span class="s">"1.0.0"</span><span class="p">),</span> <span class="c">// Application version for debugging</span>
+	<span class="p">)</span>
+
+	<span class="c">// 4) Demonstration of the logging system with different scenarios</span>
+
+	<span class="c">// DEBUG level log: This won't appear in stdout because our stdout handler</span>
+	<span class="c">// is configured for INFO and above. However, it demonstrates the filtering behavior.</span>
+	<span class="n">logger</span><span class="o">.</span><span class="n">Debug</span><span class="p">(</span><span class="s">"debug event (won't print to stdout by default)"</span><span class="p">)</span> <span class="c">// Below INFO level</span>
+
+	<span class="c">// INFO level log: This will appear in stdout and info.log</span>
+	<span class="c">// It includes structured data (port number and timestamp) that will be formatted as JSON.</span>
+	<span class="n">logger</span><span class="o">.</span><span class="n">Info</span><span class="p">(</span><span class="s">"server started"</span><span class="p">,</span>
+		<span class="s">"port"</span><span class="p">,</span> <span class="m">8080</span><span class="p">,</span> <span class="c">// Server port for context</span>
+		<span class="s">"ts"</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span><span class="o">.</span><span class="n">UTC</span><span class="p">(),</span> <span class="c">// Timestamp in UTC for consistency</span>
+	<span class="p">)</span>
+
+	<span class="c">// Create a specialized logger for HTTP requests with grouping and additional context</span>
+	<span class="c">// WithGroup("http") creates a namespace for HTTP-related attributes</span>
+	<span class="c">// With() adds specific attributes that will be included in all logs from this logger</span>
+	<span class="n">httpLog</span> <span class="o">:=</span> <span class="n">logger</span><span class="o">.</span><span class="n">WithGroup</span><span class="p">(</span><span class="s">"http"</span><span class="p">)</span><span class="o">.</span><span class="n">With</span><span class="p">(</span>
+		<span class="n">slog</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s">"method"</span><span class="p">,</span> <span class="s">"GET"</span><span class="p">),</span>  <span class="c">// HTTP method</span>
+		<span class="n">slog</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s">"path"</span><span class="p">,</span> <span class="s">"/users"</span><span class="p">),</span> <span class="c">// Request path</span>
+	<span class="p">)</span>
+
+	<span class="c">// WARN level log: This will appear in stdout, warn.log, and info.log</span>
+	<span class="c">// The grouping means the attributes will be structured as "http.method" and "http.path"</span>
+	<span class="n">httpLog</span><span class="o">.</span><span class="n">Warn</span><span class="p">(</span><span class="s">"slow request"</span><span class="p">,</span> <span class="s">"duration_ms"</span><span class="p">,</span> <span class="m">820</span><span class="p">)</span>
+
+	<span class="c">// Simulate a database error to demonstrate ERROR level logging</span>
+	<span class="n">err</span> <span class="o">:=</span> <span class="n">simulateDB</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+		<span class="c">// ERROR level log: This will appear in stdout, error.log, and info.log</span>
+		<span class="c">// It includes structured error information for debugging</span>
+		<span class="n">logger</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="s">"db timeout"</span><span class="p">,</span>
+			<span class="s">"op"</span><span class="p">,</span> <span class="s">"SELECT"</span><span class="p">,</span> <span class="c">// Database operation that failed</span>
+			<span class="s">"retryable"</span><span class="p">,</span> <span class="no">true</span><span class="p">,</span> <span class="c">// Whether the operation can be retried</span>
+			<span class="n">slog</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="s">"error"</span><span class="p">,</span> <span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">()),</span> <span class="c">// The actual error message</span>
+		<span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">simulateDB</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="c">// Simulate a database timeout error for demonstration purposes.</span>
+	<span class="c">// context.DeadlineExceeded is a standard Go error that represents a timeout condition.</span>
+	<span class="c">// This is commonly used in database operations when a query takes too long to complete.</span>
+	<span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">DeadlineExceeded</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+  </main>
+</body>
+
+<script src="/digital-garden/assets/js/sidebar-resize.js"></script>
+
+</html>
