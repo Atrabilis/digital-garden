@@ -29,6 +29,7 @@ jobs:
         run: |
           gem install jekyll -v 3.9.3
           gem install jekyll-feed jekyll-seo-tag
+          gem install kramdown-parser-gfm     
 
       - name: Build site
         env:
