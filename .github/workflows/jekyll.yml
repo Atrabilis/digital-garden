@@ -2,12 +2,14 @@ name: Build and Deploy Jekyll
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
     paths:
       - 'jekyll-site/**'
-
   workflow_dispatch:
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -20,18 +22,19 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1'   # o la que prefieras
-          bundler-cache: true
+          ruby-version: '3.1'
+          bundler-cache: false        # no usamos Bundler
 
-      - name: Install Jekyll
+      - name: Install Jekyll (no Gemfile)
         run: |
           gem install jekyll -v 3.9.3
           gem install jekyll-feed jekyll-seo-tag
-        
+
       - name: Build site
+        env:
+          JEKYLL_ENV: production
         run: |
-          cd jekyll-site
-          bundle exec jekyll build
+          jekyll build -s jekyll-site -d jekyll-site/_site
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
