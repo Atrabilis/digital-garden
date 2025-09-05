@@ -1,1 +1,24 @@
+# --- Jekyll build output
+jekyll-site/_site/
+
+# --- Jekyll caches
+.jekyll-cache/
+jekyll-site/.jekyll-cache/
+.sass-cache/
+jekyll-site/.sass-cache/
+
+# --- Ruby / Bundler
+/vendor/
+/.bundle/
+/Gemfile.lock
+
+# --- Editor / SO
+.DS_Store
+Thumbs.db
+
+# --- Tests temporales (si los hubiera)
 **/go-test/
+
+# --- Backups (por si algún día vuelven a aparecer)
+**/*.bak
+**/*.bak.*
