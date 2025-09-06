@@ -17,6 +17,9 @@ collections:
   networking:
     output: true
     permalink: /networking/:name/
+  hardware:
+    output: true
+    permalink: /hardware/:name/
 
 
 markdown: kramdown
