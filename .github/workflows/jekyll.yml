@@ -41,7 +41,6 @@ jobs:
         env:
           JEKYLL_ENV: production
         run: |
-          cd jekyll-site
           jekyll build
 
       - name: Setup Pages
