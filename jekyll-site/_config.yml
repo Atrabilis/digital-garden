@@ -20,6 +20,9 @@ collections:
   hardware:
     output: true
     permalink: /hardware/:name/
+  linux:
+    output: true
+    permalink: /linux/:name/
 
 
 markdown: kramdown
