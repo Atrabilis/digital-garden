@@ -23,6 +23,9 @@ collections:
   linux:
     output: true
     permalink: /linux/:name/
+  git:
+    output: true
+    permalink: /git/:name/
 
 
 markdown: kramdown
