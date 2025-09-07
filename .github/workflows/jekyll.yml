@@ -41,7 +41,8 @@ jobs:
         env:
           JEKYLL_ENV: production
         run: |
-          jekyll build -s jekyll-site -d _site
+          cd jekyll-site
+          jekyll build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -49,7 +50,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./_site
+          path: ./jekyll-site/_site
 
   deploy:
     environment:
