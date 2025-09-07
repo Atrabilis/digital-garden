@@ -35,7 +35,8 @@
         {%- assign cols = site.collections | where_exp: "c", "c.label != 'posts'" -%}
         {%- for c in cols %}
           {%- assign label = c.label -%}
-          {%- assign docs = c.docs | sort: "title" -%}
+          {%- assign docs = c.docs | sort: "category" -%}
+          {%- assign grouped_docs = docs | group_by: "category" -%}
           <li class="collection">
             <details class="collection__details" {% if page.collection == label %}open{% endif %}>
               <summary class="collection__summary">
@@ -48,14 +49,45 @@
                 </span>
                 <span class="collection__count">({{ docs | size }})</span>
               </summary>
-              <ul class="doc-list">
-                {%- for d in docs %}
-                  <li class="doc-list__item">
-                    <a class="doc-list__link{% if d.url == page.url %} is-active{% endif %}"
-                       href="{{ d.url | relative_url }}">{{ d.title | default: d.name }}</a>
-                  </li>
-                {%- endfor %}
-              </ul>
+              
+              {%- for group in grouped_docs %}
+                {%- if group.name != "" %}
+                  <!-- Documentos con categoría -->
+                  <div class="subcategory">
+                    <h4 class="subcategory__title">{{ group.name }}</h4>
+                    <ul class="doc-list doc-list--nested">
+                      {%- for d in group.items %}
+                        <li class="doc-list__item">
+                          <a class="doc-list__link{% if d.url == page.url %} is-active{% endif %}"
+                             href="{{ d.url | relative_url }}">{{ d.title | default: d.name }}</a>
+                        </li>
+                      {%- endfor %}
+                    </ul>
+                  </div>
+                {%- else %}
+                  <!-- Documentos sin categoría -->
+                  <ul class="doc-list">
+                    {%- for d in group.items %}
+                      <li class="doc-list__item">
+                        <a class="doc-list__link{% if d.url == page.url %} is-active{% endif %}"
+                           href="{{ d.url | relative_url }}">{{ d.title | default: d.name }}</a>
+                      </li>
+                    {%- endfor %}
+                  </ul>
+                {%- endif %}
+              {%- endfor %}
+              
+              <!-- Si no hay documentos agrupados, mostrar todos -->
+              {%- if grouped_docs.size == 0 %}
+                <ul class="doc-list">
+                  {%- for d in docs %}
+                    <li class="doc-list__item">
+                      <a class="doc-list__link{% if d.url == page.url %} is-active{% endif %}"
+                         href="{{ d.url | relative_url }}">{{ d.title | default: d.name }}</a>
+                    </li>
+                  {%- endfor %}
+                </ul>
+              {%- endif %}
             </details>
           </li>
         {%- endfor %}

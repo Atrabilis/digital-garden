@@ -1,5 +1,5 @@
 ---
-title: "Common task"
+title: "Common tasks"
 layout: default
 ---
 

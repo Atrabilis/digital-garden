@@ -1,3 +1,10 @@
+---
+title: Scanner
+layout: default
+category: bufio
+parent: go
+---
+
 ## Usage pattern of `bufio.Scanner`
 
 | Step | Description |
