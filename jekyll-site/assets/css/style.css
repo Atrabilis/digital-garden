@@ -17,17 +17,17 @@
     --shadow-1: 0 1px 2px rgba(0,0,0,.05), 0 4px 12px rgba(0,0,0,.05);
   }
 
-  /* Dark mode variables - Cursor/Dracula theme */
+  /* Dark mode variables - Cursor theme */
   [data-theme="dark"] {
-    --bg: #282a36;
-    --bg-alt: #44475a;
-    --text: #f8f8f2;
-    --muted: #6272a4;
-    --border: #44475a;
-    --accent: #8be9fd;
-    --accent-2: #50fa7b;
-    --link: #8be9fd;
-    --shadow-1: 0 1px 2px rgba(0,0,0,.4), 0 4px 12px rgba(0,0,0,.3);
+    --bg: #1e1e1e;
+    --bg-alt: #252526;
+    --text: #cccccc;
+    --muted: #858585;
+    --border: #3c3c3c;
+    --accent: #007acc;
+    --accent-2: #0e639c;
+    --link: #4fc1ff;
+    --shadow-1: 0 1px 2px rgba(0,0,0,.5), 0 4px 12px rgba(0,0,0,.4);
   }
   
 
@@ -240,7 +240,7 @@
   /* Dark mode inline code */
   [data-theme="dark"] .content code {
     background: color-mix(in oklab, var(--accent) 20%, transparent);
-    color: #f8f8f2;
+    color: #cccccc;
   }
   .content pre{
     overflow: auto;
@@ -277,13 +277,13 @@
   .sidebar::-webkit-scrollbar-track{ background: transparent; }
   
   /* ==========
-     Rouge — Cursor/Dracula theme
+     Rouge — Cursor theme
      ========== */
   
   /* Block container */
   .highlight {
-    background: #282a36;    /* Cursor dark background */
-    color: #f8f8f2;
+    background: #1e1e1e;    /* Cursor dark background */
+    color: #cccccc;
     border-radius: 10px;
   }
   .highlight pre {
@@ -303,24 +303,24 @@
   /* Make inline code inside highlighted blocks inherit */
   .highlight code { background: transparent; padding: 0; }
   
-  /* Cursor/Dracula token colors */
+  /* Cursor token colors */
   .highlight .k, .highlight .kc, .highlight .kd,
-  .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kt { color: #ff79c6; } /* Keywords - Pink */
+  .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kt { color: #569cd6; } /* Keywords - Blue */
   .highlight .s, .highlight .sa, .highlight .sb, .highlight .sc,
   .highlight .dl, .highlight .sd, .highlight .s2, .highlight .se,
   .highlight .sh, .highlight .si, .highlight .sx, .highlight .sr,
-  .highlight .s1, .highlight .ss { color: #f1fa8c; } /* Strings - Yellow */
+  .highlight .s1, .highlight .ss { color: #ce9178; } /* Strings - Orange */
   .highlight .m, .highlight .mb, .highlight .mf,
-  .highlight .mh, .highlight .mi, .highlight .il, .highlight .mo { color: #bd93f9; } /* Numbers - Purple */
+  .highlight .mh, .highlight .mi, .highlight .il, .highlight .mo { color: #b5cea8; } /* Numbers - Light Green */
   .highlight .c, .highlight .ch, .highlight .cm, .highlight .c1, .highlight .cs {
-    color: #6272a4; font-style: italic; } /* Comments - Blue */
-  .highlight .nf, .highlight .fm { color: #50fa7b; } /* Function names - Green */
-  .highlight .nv, .highlight .vc, .highlight .vg, .highlight .vi { color: #8be9fd; } /* Variables - Cyan */
-  .highlight .nc, .highlight .nn, .highlight .ne { color: #ffb86c; } /* Classes/Modules - Orange */
-  .highlight .o, .highlight .ow { color: #f8f8f2; } /* Operators - White */
-  .highlight .nt { color: #50fa7b; } /* Tags (HTML/XML) - Green */
-  .highlight .na { color: #8be9fd; } /* Attributes - Cyan */
-  .highlight .nb { color: #f8f8f2; } /* Builtins / titles - White */
+    color: #6a9955; font-style: italic; } /* Comments - Green */
+  .highlight .nf, .highlight .fm { color: #dcdcaa; } /* Function names - Yellow */
+  .highlight .nv, .highlight .vc, .highlight .vg, .highlight .vi { color: #9cdcfe; } /* Variables - Light Blue */
+  .highlight .nc, .highlight .nn, .highlight .ne { color: #4ec9b0; } /* Classes/Modules - Teal */
+  .highlight .o, .highlight .ow { color: #cccccc; } /* Operators - Gray */
+  .highlight .nt { color: #569cd6; } /* Tags (HTML/XML) - Blue */
+  .highlight .na { color: #9cdcfe; } /* Attributes - Light Blue */
+  .highlight .nb { color: #cccccc; } /* Builtins / titles - Gray */
   
   /* Optional: subtle border to separate from page bg on light mode */
   @media (prefers-color-scheme: light){
@@ -404,7 +404,7 @@
 
   [data-theme="dark"] .theme-toggle__switch::before {
     transform: translateX(20px);
-    background: #282a36;
+    background: #1e1e1e;
   }
 
   /* Icons for light/dark mode */
