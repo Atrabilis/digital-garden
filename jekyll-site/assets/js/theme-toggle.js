@@ -1,116 +1,86 @@
 /**
- * Dark Mode Toggle
- * Maneja el cambio entre modo claro y oscuro con persistencia en localStorage
+ * Dark Mode Toggle - GitHub Pages Compatible
+ * Versión simplificada para máxima compatibilidad
  */
 
-(function() {
-  'use strict';
+// Función simple para cambiar tema
+function toggleTheme() {
+  var html = document.documentElement;
+  var currentTheme = html.getAttribute('data-theme') || 'light';
+  var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
   
-  const storageKey = 'theme-preference';
-  let themeToggle;
-  let html;
-  let isInitialized = false;
+  // Aplicar nuevo tema
+  html.setAttribute('data-theme', newTheme);
   
-  function init() {
-    if (isInitialized) return;
-    
-    // Obtener elementos
-    themeToggle = document.getElementById('theme-toggle');
-    html = document.documentElement;
-    
-    // Verificar que el elemento existe
-    if (!themeToggle) {
-      // Reintentar después de un breve delay
-      setTimeout(init, 100);
-      return;
-    }
-    
-    // Cargar tema inicial
-    loadTheme();
-    
-    // Agregar event listeners
-    themeToggle.addEventListener('click', handleClick);
-    themeToggle.addEventListener('keydown', handleKeydown);
-    
-    isInitialized = true;
+  // Guardar preferencia
+  try {
+    localStorage.setItem('theme-preference', newTheme);
+  } catch (e) {
+    // Ignorar errores de localStorage
   }
   
-  function handleClick(e) {
-    e.preventDefault();
-    e.stopPropagation();
+  // Actualizar aria-label
+  var toggle = document.getElementById('theme-toggle');
+  if (toggle) {
+    var label = newTheme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro';
+    toggle.setAttribute('aria-label', label);
+  }
+}
+
+// Función para cargar tema guardado
+function loadTheme() {
+  var html = document.documentElement;
+  var savedTheme;
+  
+  try {
+    savedTheme = localStorage.getItem('theme-preference');
+  } catch (e) {
+    savedTheme = null;
+  }
+  
+  // Detectar preferencia del sistema
+  var systemPrefersDark = false;
+  if (window.matchMedia) {
+    systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  
+  // Aplicar tema: preferencia guardada > preferencia del sistema > modo oscuro por defecto
+  var theme = savedTheme || (systemPrefersDark ? 'dark' : 'dark');
+  html.setAttribute('data-theme', theme);
+}
+
+// Función para manejar teclado
+function handleKeydown(event) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
     toggleTheme();
   }
-  
-  function handleKeydown(e) {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      e.stopPropagation();
-      toggleTheme();
-    }
+}
+
+// Inicializar cuando el DOM esté listo
+function initThemeToggle() {
+  var toggle = document.getElementById('theme-toggle');
+  if (!toggle) {
+    // Reintentar después de un breve delay
+    setTimeout(initThemeToggle, 100);
+    return;
   }
   
-  function loadTheme() {
-    try {
-      const savedTheme = localStorage.getItem(storageKey);
-      const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
-      // Prioridad: preferencia guardada > preferencia del sistema > modo claro
-      const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-      setTheme(theme);
-    } catch (error) {
-      setTheme('light');
-    }
-  }
+  // Cargar tema inicial
+  loadTheme();
   
-  function toggleTheme() {
-    try {
-      const currentTheme = html.getAttribute('data-theme') || 'light';
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      setTheme(newTheme);
-    } catch (error) {
-      // Error silencioso
-    }
-  }
+  // Agregar event listeners
+  toggle.addEventListener('click', function(e) {
+    e.preventDefault();
+    toggleTheme();
+  });
   
-  function setTheme(theme) {
-    try {
-      html.setAttribute('data-theme', theme);
-      localStorage.setItem(storageKey, theme);
-      
-      // Actualizar aria-label para accesibilidad
-      if (themeToggle) {
-        const label = theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro';
-        themeToggle.setAttribute('aria-label', label);
-      }
-    } catch (error) {
-      // Error silencioso
-    }
-  }
-  
-  // Múltiples estrategias de inicialización para máxima compatibilidad
-  function tryInit() {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
-    }
-  }
-  
-  // Inicializar inmediatamente
-  tryInit();
-  
-  // También intentar después de un delay por si acaso
-  setTimeout(tryInit, 100);
-  
-  // Exponer función global para debugging (solo en desarrollo)
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    window.debugThemeToggle = function() {
-      console.log('ThemeToggle Debug Info:');
-      console.log('- Elemento encontrado:', !!themeToggle);
-      console.log('- Inicializado:', isInitialized);
-      console.log('- Tema actual:', html.getAttribute('data-theme'));
-      console.log('- Tema guardado:', localStorage.getItem(storageKey));
-    };
-  }
-  
-})();
+  toggle.addEventListener('keydown', handleKeydown);
+}
+
+// Inicializar
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initThemeToggle);
+} else {
+  initThemeToggle();
+}
