@@ -1,3 +1,8 @@
+---
+title: Tips
+layout: default
+---
+
 ## Execute a binary like Cron would do:
 
 ```
