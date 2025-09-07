@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Config.yml | My Digital Garden</title>
+  <meta name="description" content="Notes on my studies and experiences in the engineering and technology field" />
+  <link rel="icon" type="image/png" href="/digital-garden/assets/favicon.png">
+  <link rel="stylesheet" href="/digital-garden/assets/css/style.css">
+</head>
+
+<body>
+  <aside class="sidebar">
+    <h1 class="site-title">
+      <a href="/digital-garden/" class="site-title__link">My Digital Garden</a>
+    </h1>
+    <p class="site-desc">Notes on my studies and experiences in the engineering and technology field</p>
+
+    <!-- Dark Mode Toggle -->
+    <div class="theme-toggle" id="theme-toggle" role="button" tabindex="0" aria-label="Alternar tema" onclick="toggleTheme();">
+      <span class="theme-toggle__label">Theme</span>
+      <div class="theme-toggle__switch">
+        <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
+        </svg>
+        <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </div>
+    </div>
+
+    <nav class="side-nav" aria-label="Colecciones">
+      <h2 class="side-nav__heading">Collections</h2>
+      <ul class="side-nav__list"><li class="collection">
+            <details class="collection__details" >
+              <summary class="collection__summary">
+                <span class="collection__name">Go</span>
+                <span class="collection__count">(5)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/clickhouse/">Clickhouse</a>
+                  </li>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/influxdb2/">Influxdb2</a>
+                  </li>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/lumberjack/">Lumberjack</a>
+                  </li>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/os/">Os</a>
+                  </li>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/slog/">Slog</a>
+                  </li>
+              </ul>
+            </details>
+          </li><li class="collection">
+            <details class="collection__details" >
+              <summary class="collection__summary">
+                <span class="collection__name">good-practices</span>
+                <span class="collection__count">(1)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/good-practices/logging-system/">Logging system</a>
+                  </li>
+              </ul>
+            </details>
+          </li><li class="collection">
+            <details class="collection__details" >
+              <summary class="collection__summary">
+                <span class="collection__name">Hardware</span>
+                <span class="collection__count">(1)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/hardware/power-supplies/">Power Supplies</a>
+                  </li>
+              </ul>
+            </details>
+          </li><li class="collection">
+            <details class="collection__details" open>
+              <summary class="collection__summary">
+                <span class="collection__name">Jekyll</span>
+                <span class="collection__count">(1)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link is-active"
+                       href="/digital-garden/jekyll/config-yml/">Config.yml</a>
+                  </li>
+              </ul>
+            </details>
+          </li><li class="collection">
+            <details class="collection__details" >
+              <summary class="collection__summary">
+                <span class="collection__name">Linux</span>
+                <span class="collection__count">(1)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/linux/gnu-nano/">GNU nano</a>
+                  </li>
+              </ul>
+            </details>
+          </li><li class="collection">
+            <details class="collection__details" >
+              <summary class="collection__summary">
+                <span class="collection__name">Networking</span>
+                <span class="collection__count">(1)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/networking/wireguard/">Wireguard</a>
+                  </li>
+              </ul>
+            </details>
+          </li>
+      </ul>
+    </nav>
+    <div class="sidebar-resizer"></div>
+  </aside>
+
+  <main class="content" id="content">
+    
+<h1 id="jekyll-configuration-reference">Jekyll Configuration Reference</h1>
+
+<h2 id="1-site-identity-and-urls">1. Site Identity and URLs</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">title</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Mi</span><span class="nv"> </span><span class="s">Digital</span><span class="nv"> </span><span class="s">Garden"</span>      <span class="c1"># Global site title (available as site.title)</span>
+<span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Notas</span><span class="nv"> </span><span class="s">y</span><span class="nv"> </span><span class="s">aprendizajes"</span>
+<span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://usuario.github.io"</span>  <span class="c1"># Base domain URL (without trailing slash)</span>
+<span class="na">baseurl</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/digital-garden"</span>        <span class="c1"># Subpath if NOT a user.github.io site</span>
+</code></pre></div></div>
+
+<p><strong>Technical Notes:</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">url + baseurl</code> constructs absolute links for the site</li>
+  <li>In layouts/links, always use <code class="language-plaintext highlighter-rouge">{{ '/' | relative_url }}</code> or <code class="language-plaintext highlighter-rouge">{{ '/path' | absolute_url }}</code> for compatibility between local development and GitHub Pages</li>
+  <li>Any additional keys you add here (e.g., author, lang) become available as <code class="language-plaintext highlighter-rouge">site.author</code>, <code class="language-plaintext highlighter-rouge">site.lang</code></li>
+  <li>The <code class="language-plaintext highlighter-rouge">url</code> should be the full domain without trailing slash</li>
+  <li>The <code class="language-plaintext highlighter-rouge">baseurl</code> is used for project sites on GitHub Pages (user sites have empty baseurl)</li>
+</ul>
+
+<h2 id="2-themes-and-plugins">2. Themes and Plugins</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">theme</span><span class="pi">:</span> <span class="s">minima</span>                 <span class="c1"># Gem-based theme (if used, no need for custom _layouts)</span>
+<span class="c1"># remote_theme: owner/repo    # If using jekyll-remote-theme plugin</span>
+
+<span class="na">plugins</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">jekyll-feed</span>               <span class="c1"># RSS/Atom feed generation</span>
+  <span class="pi">-</span> <span class="s">jekyll-seo-tag</span>            <span class="c1"># SEO metadata tags</span>
+  <span class="pi">-</span> <span class="s">jekyll-sitemap</span>            <span class="c1"># sitemap.xml generation</span>
+  <span class="c1"># - jekyll-paginate         # Classic pagination (if needed)</span>
+</code></pre></div></div>
+
+<p><strong>Technical Notes:</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">theme</code>: Activates a gem-packaged theme from RubyGems</li>
+  <li><code class="language-plaintext highlighter-rouge">remote_theme</code>: Uses themes directly from GitHub repositories (requires jekyll-remote-theme plugin)</li>
+  <li><code class="language-plaintext highlighter-rouge">plugins</code>: List of plugins to load. GitHub Pages has a whitelist of allowed plugins; outside GitHub Pages you can use any plugin</li>
+  <li>When using a theme, you don’t need custom <code class="language-plaintext highlighter-rouge">_layouts</code> unless you want to override theme layouts</li>
+  <li>Plugins extend Jekyll functionality and are essential for features like RSS feeds and SEO</li>
+</ul>
+
+<h2 id="3-paths-and-directory-structure">3. Paths and Directory Structure</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">source</span><span class="pi">:</span> <span class="s">.</span>             <span class="c1"># Project root directory (default: ".")</span>
+<span class="na">destination</span><span class="pi">:</span> <span class="s">_site</span>    <span class="c1"># Generated output (HTML/CSS/JS)</span>
+<span class="na">includes_dir</span><span class="pi">:</span> <span class="s">_includes</span>
+<span class="na">layouts_dir</span><span class="pi">:</span> <span class="s">_layouts</span>
+<span class="na">collections_dir</span><span class="pi">:</span> <span class="s">.</span>    <span class="c1"># Where collections live (default: root)</span>
+<span class="na">data_dir</span><span class="pi">:</span> <span class="s">_data</span>       <span class="c1"># .yml/.json/.csv files accessible as site.data</span>
+</code></pre></div></div>
+
+<p><strong>Technical Notes:</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">source</code>: Root directory where Jekyll looks for content to process</li>
+  <li><code class="language-plaintext highlighter-rouge">destination</code>: Output directory where generated site files are placed</li>
+  <li><code class="language-plaintext highlighter-rouge">includes_dir</code>: Directory for reusable Liquid templates (accessed via <code class="language-plaintext highlighter-rouge">{% include %}</code>)</li>
+  <li><code class="language-plaintext highlighter-rouge">layouts_dir</code>: Directory containing layout templates</li>
+  <li><code class="language-plaintext highlighter-rouge">collections_dir</code>: Base directory for collections (collections are in <code class="language-plaintext highlighter-rouge">_collection_name/</code> folders)</li>
+  <li><code class="language-plaintext highlighter-rouge">data_dir</code>: Directory for data files that become available in Liquid as <code class="language-plaintext highlighter-rouge">site.data</code></li>
+</ul>
+
+<h2 id="4-content-processing">4. Content Processing</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">markdown</span><span class="pi">:</span> <span class="s">kramdown</span>
+<span class="na">highlighter</span><span class="pi">:</span> <span class="s">rouge</span>
+<span class="na">markdown_ext</span><span class="pi">:</span> <span class="s2">"</span><span class="s">markdown,mkdown,mkdn,mkd,md"</span>   <span class="c1"># Extensions treated as Markdown</span>
+
+<span class="na">kramdown</span><span class="pi">:</span>
+  <span class="na">input</span><span class="pi">:</span> <span class="s">GFM</span>              <span class="c1"># GitHub Flavored Markdown support (tables, lists, etc.)</span>
+  <span class="na">hard_wrap</span><span class="pi">:</span> <span class="no">false</span>
+  <span class="na">syntax_highlighter</span><span class="pi">:</span> <span class="s">rouge</span>
+  <span class="na">syntax_highlighter_opts</span><span class="pi">:</span>
+    <span class="na">line_numbers</span><span class="pi">:</span> <span class="no">false</span>
+
+<span class="na">excerpt_separator</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;!--more--&gt;"</span>  <span class="c1"># Manual marker for page/post excerpt</span>
+<span class="na">permalink</span><span class="pi">:</span> <span class="s">pretty</span>                 <span class="c1"># Global permalink style (pages and posts)</span>
+</code></pre></div></div>
+
+<p><strong>Technical Notes:</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">markdown: kramdown</code>: Uses Kramdown as the Markdown processor (fast and feature-rich)</li>
+  <li><code class="language-plaintext highlighter-rouge">highlighter: rouge</code>: Syntax highlighting engine for code blocks</li>
+  <li><code class="language-plaintext highlighter-rouge">kramdown.input: GFM</code>: Enables GitHub Flavored Markdown features (tables, strikethrough, task lists)</li>
+  <li><code class="language-plaintext highlighter-rouge">excerpt_separator</code>: Controls where Jekyll cuts the excerpt (available as <code class="language-plaintext highlighter-rouge">{{ page.excerpt }}</code>)</li>
+  <li><code class="language-plaintext highlighter-rouge">permalink</code>: Global permalink style accepts values like <code class="language-plaintext highlighter-rouge">pretty</code>, <code class="language-plaintext highlighter-rouge">date</code>, <code class="language-plaintext highlighter-rouge">none</code>, or custom templates</li>
+  <li><code class="language-plaintext highlighter-rouge">hard_wrap: false</code>: Prevents automatic line breaks in paragraphs</li>
+  <li><code class="language-plaintext highlighter-rouge">line_numbers: false</code>: Disables line numbers in code blocks for cleaner output</li>
+</ul>
+
+<h2 id="5-collections">5. Collections</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">collections</span><span class="pi">:</span>
+  <span class="na">linux</span><span class="pi">:</span>
+    <span class="na">output</span><span class="pi">:</span> <span class="no">true</span>                  <span class="c1"># Generate HTML for each document</span>
+    <span class="na">permalink</span><span class="pi">:</span> <span class="s">/linux/:name/</span>      <span class="c1"># URL template for _linux/ docs</span>
+
+<span class="c1"># Default values applied to a collection:</span>
+<span class="na">defaults</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">scope</span><span class="pi">:</span>
+      <span class="na">path</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>                    <span class="c1"># Within the entire project</span>
+      <span class="na">type</span><span class="pi">:</span> <span class="s">linux</span>                 <span class="c1"># Collection name</span>
+    <span class="na">values</span><span class="pi">:</span>
+      <span class="na">layout</span><span class="pi">:</span> <span class="s">default</span>             <span class="c1"># Default layout for _linux/*</span>
+</code></pre></div></div>
+
+<p><strong>Technical Notes:</strong></p>
+<ul>
+  <li>Collections create folders prefixed with <code class="language-plaintext highlighter-rouge">_</code> (e.g., <code class="language-plaintext highlighter-rouge">_linux/</code>, <code class="language-plaintext highlighter-rouge">_notes/</code>)</li>
+  <li>Each <code class="language-plaintext highlighter-rouge">.md</code> file inside must have front matter (<code class="language-plaintext highlighter-rouge">---</code>) to be processed</li>
+  <li><code class="language-plaintext highlighter-rouge">output: true</code> generates individual HTML pages for each document</li>
+  <li><code class="language-plaintext highlighter-rouge">output: false</code> makes documents available in Liquid but doesn’t generate pages</li>
+</ul>
+
+<p><strong>Useful placeholders in collection permalinks:</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">:name</code> - filename without extension</li>
+  <li><code class="language-plaintext highlighter-rouge">:path</code> - internal path within collection</li>
+  <li><code class="language-plaintext highlighter-rouge">:collection</code> - collection name</li>
+  <li><code class="language-plaintext highlighter-rouge">:output_ext</code> - output extension (usually <code class="language-plaintext highlighter-rouge">.html</code>)</li>
+</ul>
+
+<p><strong>Example:</strong> <code class="language-plaintext highlighter-rouge">/notes/:path/</code> → <code class="language-plaintext highlighter-rouge">_notes/go/slog.md</code> becomes <code class="language-plaintext highlighter-rouge">/notes/go/slog/</code></p>
+
+<h2 id="6-file-inclusionexclusion-and-preservation">6. File Inclusion/Exclusion and Preservation</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">exclude</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">README.md</span>
+  <span class="pi">-</span> <span class="s">scripts/</span>
+  <span class="pi">-</span> <span class="s">node_modules/</span>
+<span class="na">include</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s2">"</span><span class="s">.well-known"</span>    <span class="c1"># Force include something that would normally be excluded</span>
+<span class="na">keep_files</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s2">"</span><span class="s">.git"</span>           <span class="c1"># Don't delete certain paths within _site when regenerating</span>
+</code></pre></div></div>
+
+<p><strong>Technical Notes:</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">exclude</code>: Jekyll will not process or copy these paths during build</li>
+  <li><code class="language-plaintext highlighter-rouge">include</code>: Forces inclusion of files that would normally be excluded (useful for dotfiles)</li>
+  <li><code class="language-plaintext highlighter-rouge">keep_files</code>: Prevents Jekyll from deleting certain paths within <code class="language-plaintext highlighter-rouge">_site/</code> between builds</li>
+  <li>Excluded files are completely ignored by Jekyll’s processing pipeline</li>
+  <li>Include is useful for files starting with dots (like <code class="language-plaintext highlighter-rouge">.well-known</code> for security.txt)</li>
+  <li>Keep_files is essential for preserving custom files in the output directory</li>
+</ul>
+
+<h2 id="7-build-and-server-flags-also-available-as-cli-flags">7. Build and Server Flags (also available as CLI flags)</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Build Configuration</span>
+<span class="na">future</span><span class="pi">:</span> <span class="no">false</span>         <span class="c1"># Publish content dated in the future?</span>
+<span class="na">unpublished</span><span class="pi">:</span> <span class="no">false</span>    <span class="c1"># Include items with 'published: false'?</span>
+<span class="na">lsi</span><span class="pi">:</span> <span class="no">false</span>            <span class="c1"># Related posts with LSI (requires 'classifier-reborn')</span>
+<span class="na">encoding</span><span class="pi">:</span> <span class="s2">"</span><span class="s">utf-8"</span>
+<span class="na">timezone</span><span class="pi">:</span> <span class="s2">"</span><span class="s">America/Santiago"</span>   <span class="c1"># Affects times/dates (site.time)</span>
+
+<span class="c1"># Serve Configuration (when using `jekyll serve`)</span>
+<span class="na">host</span><span class="pi">:</span> <span class="s">127.0.0.1</span>
+<span class="na">port</span><span class="pi">:</span> <span class="m">4000</span>
+<span class="na">livereload</span><span class="pi">:</span> <span class="no">true</span>      <span class="c1"># Auto-reload (if your version supports it)</span>
+<span class="na">watch</span><span class="pi">:</span> <span class="no">true</span>           <span class="c1"># Watch for changes on disk</span>
+<span class="na">incremental</span><span class="pi">:</span> <span class="no">false</span>    <span class="c1"># Incremental build (experimental: use with caution)</span>
+
+<span class="c1"># Local server headers (WEBrick)</span>
+<span class="na">webrick</span><span class="pi">:</span>
+  <span class="na">headers</span><span class="pi">:</span>
+    <span class="na">Cache-Control</span><span class="pi">:</span> <span class="s2">"</span><span class="s">no-cache"</span>
+</code></pre></div></div>
+
+<p><strong>Technical Notes:</strong></p>
+<ul>
+  <li>Most of these parameters can be passed via CLI: <code class="language-plaintext highlighter-rouge">jekyll serve --livereload --host 0.0.0.0 --port 8080</code></li>
+  <li><code class="language-plaintext highlighter-rouge">future: false</code> prevents publishing posts with future dates (useful for scheduled content)</li>
+  <li><code class="language-plaintext highlighter-rouge">unpublished: false</code> excludes content marked with <code class="language-plaintext highlighter-rouge">published: false</code> in front matter</li>
+  <li><code class="language-plaintext highlighter-rouge">lsi: false</code> disables Latent Semantic Indexing for related posts (requires additional gem)</li>
+  <li><code class="language-plaintext highlighter-rouge">incremental: true</code> can speed up builds but may miss some changes (experimental feature)</li>
+  <li><code class="language-plaintext highlighter-rouge">livereload: true</code> automatically refreshes browser when files change</li>
+  <li><code class="language-plaintext highlighter-rouge">watch: true</code> monitors file system for changes during development</li>
+</ul>
+
+<h2 id="8-sassscss-configuration">8. SASS/SCSS Configuration</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">sass</span><span class="pi">:</span>
+  <span class="na">sass_dir</span><span class="pi">:</span> <span class="s">_sass</span>      <span class="c1"># Directory for .scss partials</span>
+  <span class="na">style</span><span class="pi">:</span> <span class="s">compressed</span>    <span class="c1"># expanded | compressed</span>
+</code></pre></div></div>
+
+<p><strong>Technical Notes:</strong></p>
+<ul>
+  <li>If you use SCSS in your themes/layouts, this controls compilation and output style</li>
+  <li><code class="language-plaintext highlighter-rouge">sass_dir</code>: Directory where Jekyll looks for SCSS partials and imports</li>
+  <li><code class="language-plaintext highlighter-rouge">style: compressed</code> produces minified CSS for production (smaller file size)</li>
+  <li><code class="language-plaintext highlighter-rouge">style: expanded</code> produces readable CSS for development (easier debugging)</li>
+  <li>SCSS files in <code class="language-plaintext highlighter-rouge">_sass/</code> are treated as partials and won’t generate individual CSS files</li>
+</ul>
+
+<h2 id="9-permalinks-templates-and-placeholders">9. Permalinks (Templates and Placeholders)</h2>
+
+<p>At global level or by type (posts/collections) you can use templates:</p>
+
+<p><strong>Predefined styles:</strong> <code class="language-plaintext highlighter-rouge">pretty</code>, <code class="language-plaintext highlighter-rouge">date</code>, <code class="language-plaintext highlighter-rouge">ordinal</code>, <code class="language-plaintext highlighter-rouge">none</code></p>
+
+<p><strong>Custom templates (examples):</strong></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Global</span>
+<span class="na">permalink</span><span class="pi">:</span> <span class="s">/:categories/:title/</span>
+
+<span class="c1"># Only for posts</span>
+<span class="na">collections</span><span class="pi">:</span>
+  <span class="na">posts</span><span class="pi">:</span>
+    <span class="na">output</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">permalink</span><span class="pi">:</span> <span class="s">/blog/:year/:month/:day/:title/</span>
+</code></pre></div></div>
+
+<p><strong>Available placeholders:</strong></p>
+
+<p><strong>Posts:</strong> <code class="language-plaintext highlighter-rouge">:year</code>, <code class="language-plaintext highlighter-rouge">:month</code>, <code class="language-plaintext highlighter-rouge">:day</code>, <code class="language-plaintext highlighter-rouge">:title</code>, <code class="language-plaintext highlighter-rouge">:categories</code></p>
+
+<p><strong>Pages/Collections:</strong> <code class="language-plaintext highlighter-rouge">:name</code>, <code class="language-plaintext highlighter-rouge">:path</code>, <code class="language-plaintext highlighter-rouge">:collection</code>, <code class="language-plaintext highlighter-rouge">:output_ext</code></p>
+
+<p><strong>Technical Notes:</strong></p>
+<ul>
+  <li>Permalinks control the URL structure of generated pages</li>
+  <li><code class="language-plaintext highlighter-rouge">pretty</code> adds trailing slashes and removes <code class="language-plaintext highlighter-rouge">.html</code> extensions</li>
+  <li><code class="language-plaintext highlighter-rouge">date</code> uses post date in URL structure</li>
+  <li><code class="language-plaintext highlighter-rouge">ordinal</code> uses day of year instead of month/day</li>
+  <li><code class="language-plaintext highlighter-rouge">none</code> uses the original filename structure</li>
+  <li>Custom templates allow fine-grained control over URL patterns</li>
+</ul>
+
+<h2 id="10-liquid-template-engine">10. Liquid Template Engine</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">liquid</span><span class="pi">:</span>
+  <span class="na">error_mode</span><span class="pi">:</span> <span class="s">warn</span>          <span class="c1"># lax | warn | strict</span>
+  <span class="na">strict_filters</span><span class="pi">:</span> <span class="no">false</span>
+  <span class="na">strict_variables</span><span class="pi">:</span> <span class="no">false</span>
+</code></pre></div></div>
+
+<p><strong>Technical Notes:</strong></p>
+<ul>
+  <li>Controls how Liquid reacts to non-existent filters/variables</li>
+  <li><code class="language-plaintext highlighter-rouge">error_mode: warn</code> shows warnings for undefined variables/filters but continues processing</li>
+  <li><code class="language-plaintext highlighter-rouge">error_mode: strict</code> stops processing on any undefined variable/filter</li>
+  <li><code class="language-plaintext highlighter-rouge">error_mode: lax</code> silently ignores undefined variables/filters</li>
+  <li><code class="language-plaintext highlighter-rouge">strict_filters: true</code> requires all filters to be defined</li>
+  <li><code class="language-plaintext highlighter-rouge">strict_variables: true</code> requires all variables to be defined</li>
+  <li>Recommended: <code class="language-plaintext highlighter-rouge">warn</code> mode for development, <code class="language-plaintext highlighter-rouge">strict</code> for production</li>
+</ul>
+
+<h2 id="11-custom-values-free-form">11. Custom Values (Free-form)</h2>
+
+<p>Any key you add becomes available as <code class="language-plaintext highlighter-rouge">site.&lt;key&gt;</code>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">author</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Angel</span><span class="nv"> </span><span class="s">Andrade"</span>
+<span class="na">github</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://github.com/Atrabilis"</span>
+<span class="na">links</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">text</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Inicio"</span>
+    <span class="na">href</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/"</span>
+  <span class="pi">-</span> <span class="na">text</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Linux"</span>
+    <span class="na">href</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/linux/"</span>
+</code></pre></div></div>
+
+<p><strong>Usage in layouts:</strong></p>
+
+<div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;nav&gt;
+  <span class="p">{%</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nv">item</span><span class="w"> </span><span class="nt">in</span><span class="w"> </span><span class="nv">site.links</span><span class="w"> </span><span class="p">%}</span>
+    &lt;a href="<span class="p">{{</span><span class="w"> </span><span class="nv">item</span><span class="p">.</span><span class="nv">href</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nf">relative_url</span><span class="w"> </span><span class="p">}}</span>"&gt;<span class="p">{{</span><span class="w"> </span><span class="nv">item</span><span class="p">.</span><span class="nv">text</span><span class="w"> </span><span class="p">}}</span>&lt;/a&gt;
+  <span class="p">{%</span><span class="w"> </span><span class="nt">endfor</span><span class="w"> </span><span class="p">%}</span>
+&lt;/nav&gt;
+</code></pre></div></div>
+
+<p><strong>Technical Notes:</strong></p>
+<ul>
+  <li>Custom configuration values are accessible throughout the site via <code class="language-plaintext highlighter-rouge">site.&lt;key&gt;</code></li>
+  <li>Useful for storing site-wide data like author info, social links, navigation menus</li>
+  <li>Can store complex data structures (arrays, objects) for dynamic content generation</li>
+  <li>Values are available in all Liquid templates (layouts, includes, pages, posts)</li>
+</ul>
+
+<h2 id="12-environment-specific-configuration-optional-advanced">12. Environment-specific Configuration (Optional, Advanced)</h2>
+
+<p>You can have multiple files and combine them by environment:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>_config.yml
+_config_production.yml
+</code></pre></div></div>
+
+<p><strong>Local build:</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>jekyll serve
+</code></pre></div></div>
+
+<p><strong>Production build:</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">JEKYLL_ENV</span><span class="o">=</span>production jekyll build <span class="se">\</span>
+  <span class="nt">--config</span> _config.yml,_config_production.yml
+</code></pre></div></div>
+
+<p><strong>Usage in Liquid:</strong></p>
+<div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{%</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span><span class="nv">jekyll</span><span class="p">.</span><span class="nv">environment</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"production"</span><span class="w"> </span><span class="p">%}</span> ... <span class="p">{%</span><span class="w"> </span><span class="kr">endif</span><span class="w"> </span><span class="p">%}</span>
+</code></pre></div></div>
+
+<p><strong>Technical Notes:</strong></p>
+<ul>
+  <li>Environment-specific configs allow different settings for development vs production</li>
+  <li>Use <code class="language-plaintext highlighter-rouge">--config</code> flag to specify multiple config files (comma-separated)</li>
+  <li>Later files override earlier ones (production overrides base config)</li>
+  <li><code class="language-plaintext highlighter-rouge">jekyll.environment</code> variable is available in Liquid templates</li>
+  <li>Useful for different URLs, analytics, or feature flags per environment</li>
+</ul>
+
+<h2 id="13-recommended-configuration-for-digital-garden-base-template">13. Recommended Configuration for “Digital Garden” (Base Template)</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">title</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Mi</span><span class="nv"> </span><span class="s">Digital</span><span class="nv"> </span><span class="s">Garden"</span>
+<span class="na">description</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Notas</span><span class="nv"> </span><span class="s">y</span><span class="nv"> </span><span class="s">aprendizajes"</span>
+<span class="na">url</span><span class="pi">:</span> <span class="s2">"</span><span class="s">https://usuario.github.io"</span>         <span class="c1"># Change this</span>
+<span class="na">baseurl</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/digital-garden"</span>               <span class="c1"># If project site; empty for user site</span>
+
+<span class="c1"># Use theme or create your own 'default' layout</span>
+<span class="na">theme</span><span class="pi">:</span> <span class="s">minima</span>
+<span class="c1"># plugins: [jekyll-feed, jekyll-seo-tag, jekyll-sitemap]</span>
+
+<span class="na">collections</span><span class="pi">:</span>
+  <span class="na">linux</span><span class="pi">:</span>
+    <span class="na">output</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">permalink</span><span class="pi">:</span> <span class="s">/linux/:name/</span>
+  <span class="c1"># If you want a single collection with subfolders:</span>
+  <span class="c1"># notes:</span>
+  <span class="c1">#   output: true</span>
+  <span class="c1">#   permalink: /notes/:path/</span>
+
+<span class="na">defaults</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">scope</span><span class="pi">:</span>
+      <span class="na">path</span><span class="pi">:</span> <span class="s2">"</span><span class="s">"</span>
+      <span class="na">type</span><span class="pi">:</span> <span class="s">linux</span>
+    <span class="na">values</span><span class="pi">:</span>
+      <span class="na">layout</span><span class="pi">:</span> <span class="s">default</span>
+
+<span class="na">markdown</span><span class="pi">:</span> <span class="s">kramdown</span>
+<span class="na">highlighter</span><span class="pi">:</span> <span class="s">rouge</span>
+<span class="na">kramdown</span><span class="pi">:</span>
+  <span class="na">input</span><span class="pi">:</span> <span class="s">GFM</span>
+
+<span class="na">exclude</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">node_modules/</span>
+  <span class="pi">-</span> <span class="s">scripts/</span>
+  <span class="pi">-</span> <span class="s">README.md</span>
+
+<span class="na">timezone</span><span class="pi">:</span> <span class="s2">"</span><span class="s">America/Santiago"</span>
+</code></pre></div></div>
+
+<p><strong>Technical Notes:</strong></p>
+<ul>
+  <li>With this configuration, <code class="language-plaintext highlighter-rouge">_linux/dpkg.md</code> (with front matter) will publish at <code class="language-plaintext highlighter-rouge">/linux/dpkg/</code></li>
+  <li>Provides a solid foundation for growing your digital garden</li>
+  <li>Collections allow organizing content by topic while maintaining clean URLs</li>
+  <li>Kramdown with GFM provides rich Markdown features for technical documentation</li>
+  <li>Exclude unnecessary files to speed up builds and reduce output size</li>
+</ul>
+
+<!-- EXCERPT_END -->
+
+  </main>
+</body>
+
+<script src="/digital-garden/assets/js/sidebar-resize.js"></script>
+<script src="/digital-garden/assets/js/theme-toggle.js"></script>
+
+<!-- Fallback inline script -->
+<script>
+// Función de respaldo
+function toggleTheme() {
+  var html = document.documentElement;
+  var currentTheme = html.getAttribute('data-theme');
+  var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', newTheme);
+  
+  try {
+    localStorage.setItem('theme-preference', newTheme);
+  } catch (e) {}
+  
+}
+
+// Cargar tema guardado
+try {
+  var savedTheme = localStorage.getItem('theme-preference');
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }
+} catch (e) {}
+</script>
+
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Logging system | My Digital Garden</title>
+  <meta name="description" content="Notes on my studies and experiences in the engineering and technology field" />
+  <link rel="icon" type="image/png" href="/digital-garden/assets/favicon.png">
+  <link rel="stylesheet" href="/digital-garden/assets/css/style.css">
+</head>
+
+<body>
+  <aside class="sidebar">
+    <h1 class="site-title">
+      <a href="/digital-garden/" class="site-title__link">My Digital Garden</a>
+    </h1>
+    <p class="site-desc">Notes on my studies and experiences in the engineering and technology field</p>
+
+    <!-- Dark Mode Toggle -->
+    <div class="theme-toggle" id="theme-toggle" role="button" tabindex="0" aria-label="Alternar tema" onclick="toggleTheme();">
+      <span class="theme-toggle__label">Theme</span>
+      <div class="theme-toggle__switch">
+        <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
+        </svg>
+        <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </div>
+    </div>
+
+    <nav class="side-nav" aria-label="Colecciones">
+      <h2 class="side-nav__heading">Collections</h2>
+      <ul class="side-nav__list"><li class="collection">
+            <details class="collection__details" >
+              <summary class="collection__summary">
+                <span class="collection__name">Go</span>
+                <span class="collection__count">(5)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/clickhouse/">Clickhouse</a>
+                  </li>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/influxdb2/">Influxdb2</a>
+                  </li>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/lumberjack/">Lumberjack</a>
+                  </li>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/os/">Os</a>
+                  </li>
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/go/slog/">Slog</a>
+                  </li>
+              </ul>
+            </details>
+          </li><li class="collection">
+            <details class="collection__details" open>
+              <summary class="collection__summary">
+                <span class="collection__name">good-practices</span>
+                <span class="collection__count">(1)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link is-active"
+                       href="/digital-garden/good-practices/logging-system/">Logging system</a>
+                  </li>
+              </ul>
+            </details>
+          </li><li class="collection">
+            <details class="collection__details" >
+              <summary class="collection__summary">
+                <span class="collection__name">Hardware</span>
+                <span class="collection__count">(1)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/hardware/power-supplies/">Power Supplies</a>
+                  </li>
+              </ul>
+            </details>
+          </li><li class="collection">
+            <details class="collection__details" >
+              <summary class="collection__summary">
+                <span class="collection__name">Jekyll</span>
+                <span class="collection__count">(1)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/jekyll/config-yml/">Config.yml</a>
+                  </li>
+              </ul>
+            </details>
+          </li><li class="collection">
+            <details class="collection__details" >
+              <summary class="collection__summary">
+                <span class="collection__name">Linux</span>
+                <span class="collection__count">(1)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/linux/gnu-nano/">GNU nano</a>
+                  </li>
+              </ul>
+            </details>
+          </li><li class="collection">
+            <details class="collection__details" >
+              <summary class="collection__summary">
+                <span class="collection__name">Networking</span>
+                <span class="collection__count">(1)</span>
+              </summary>
+              <ul class="doc-list">
+                  <li class="doc-list__item">
+                    <a class="doc-list__link"
+                       href="/digital-garden/networking/wireguard/">Wireguard</a>
+                  </li>
+              </ul>
+            </details>
+          </li>
+      </ul>
+    </nav>
+    <div class="sidebar-resizer"></div>
+  </aside>
+
+  <main class="content" id="content">
+    <h1 id="production-logging-system--best-practices">Production Logging System — Best Practices</h1>
+
+<h2 id="what-it-must-have">What it must have</h2>
+
+<h3 id="1-standardization">1. Standardization</h3>
+<ul>
+  <li><strong>Format</strong>: line-delimited <strong>JSON</strong> (one line per event).</li>
+  <li><strong>Timezone</strong>: <strong>UTC</strong>.</li>
+  <li><strong>Timestamps</strong>: RFC3339/ISO-8601 with milliseconds.</li>
+  <li><strong>Levels</strong>: <code class="language-plaintext highlighter-rouge">TRACE</code>(optional), <code class="language-plaintext highlighter-rouge">DEBUG</code>, <code class="language-plaintext highlighter-rouge">INFO</code>, <code class="language-plaintext highlighter-rouge">WARN</code>, <code class="language-plaintext highlighter-rouge">ERROR</code>, <code class="language-plaintext highlighter-rouge">FATAL</code>.</li>
+  <li><strong>Stable schema</strong> (consistent keys):<br />
+<code class="language-plaintext highlighter-rouge">ts</code>, <code class="language-plaintext highlighter-rouge">level</code>, <code class="language-plaintext highlighter-rouge">msg</code>, <code class="language-plaintext highlighter-rouge">service</code>, <code class="language-plaintext highlighter-rouge">env</code>, <code class="language-plaintext highlighter-rouge">host</code>, <code class="language-plaintext highlighter-rouge">pid</code>, <code class="language-plaintext highlighter-rouge">trace_id</code>, <code class="language-plaintext highlighter-rouge">span_id</code>, <code class="language-plaintext highlighter-rouge">correlation_id</code>, <code class="language-plaintext highlighter-rouge">user_id</code>, <code class="language-plaintext highlighter-rouge">method</code>, <code class="language-plaintext highlighter-rouge">path</code>, <code class="language-plaintext highlighter-rouge">status</code>, <code class="language-plaintext highlighter-rouge">latency_ms</code>.</li>
+</ul>
+
+<h3 id="2-context-and-correlation">2. Context and Correlation</h3>
+<ul>
+  <li>Propagate <strong>trace/span IDs</strong> (OpenTelemetry) and a <strong>correlation/request ID</strong> across hops (gateway → service → DB).</li>
+  <li>Include request/response metadata (without PII).</li>
+</ul>
+
+<h3 id="3-signal-separation">3. Signal Separation</h3>
+<ul>
+  <li><strong>Logs</strong>: narrative of events.</li>
+  <li><strong>Metrics</strong>: KPIs for alerting.</li>
+  <li><strong>Traces</strong>: latency and dependencies.<br />
+→ Logs for diagnosis, <strong>metrics for alerts</strong>, <strong>traces for localization</strong>.</li>
+</ul>
+
+<h3 id="4-hygiene-and-security">4. Hygiene and Security</h3>
+<ul>
+  <li><strong>No PII/secrets/keys</strong>. Apply <strong>redaction/masking</strong>.</li>
+  <li><strong>Limits</strong>: truncate oversized payloads, rate-limit noisy logs.</li>
+  <li><strong>Integrity</strong>: access control, immutability (WORM), signing if needed.</li>
+  <li><strong>Compliance</strong>: retention policies (e.g., 30–90 days hot, 180+ days cold).</li>
+</ul>
+
+<h3 id="5-reliability-and-performance">5. Reliability and Performance</h3>
+<ul>
+  <li><strong>Non-blocking</strong>: async logging with queues/buffers; backpressure safe.</li>
+  <li><strong>Fallback</strong>: graceful degradation with controlled loss (drop sampling).</li>
+  <li><strong>Sampling</strong>:
+    <ul>
+      <li>Probabilistic for high-volume <code class="language-plaintext highlighter-rouge">INFO</code>.</li>
+      <li>Always-on for <code class="language-plaintext highlighter-rouge">ERROR/FATAL</code>.</li>
+      <li>Dynamic sampling during incidents.</li>
+    </ul>
+  </li>
+  <li><strong>Rotation</strong>: size/age-based. In containers: stdout/stderr + runtime rotation.</li>
+</ul>
+
+<h3 id="6-collection-and-centralization">6. Collection and Centralization</h3>
+<ul>
+  <li>Emit logs to <strong>stdout</strong> (12-Factor) in containers; collect with <strong>Fluent Bit/Vector/Filebeat</strong>.</li>
+  <li>On VMs: <code class="language-plaintext highlighter-rouge">journald</code> or <code class="language-plaintext highlighter-rouge">logrotate</code> + agent.</li>
+  <li>Send to backend: <strong>Loki</strong>, <strong>Elasticsearch/OpenSearch</strong>, <strong>Cloud Logging</strong>, <strong>Datadog</strong>, <strong>Splunk</strong>, etc.</li>
+  <li><strong>Tiered storage</strong>: hot/warm/cold by severity.</li>
+</ul>
+
+<h3 id="7-integrated-observability">7. Integrated Observability</h3>
+<ul>
+  <li>Use <strong>OpenTelemetry</strong> (traces/metrics/logs unified).</li>
+  <li><strong>Dashboards</strong>: volume by level, top errors, route latencies.</li>
+  <li><strong>Saved searches</strong> &amp; <strong>canonical queries</strong> (e.g., errors per release in 1h).</li>
+  <li><strong>Alerts</strong> on metrics (e.g., <code class="language-plaintext highlighter-rouge">rate(5xx)</code>) with deep links to correlated logs.</li>
+</ul>
+
+<h3 id="8-operations">8. Operations</h3>
+<ul>
+  <li><strong>Version the schema</strong> and validate (contracts).</li>
+  <li><strong>Tests</strong>: unit tests for minimal fields; lint logs in CI.</li>
+  <li><strong>Feature flags</strong> for temporary <code class="language-plaintext highlighter-rouge">DEBUG</code> logging.</li>
+  <li><strong>Time sync</strong>: NTP/chrony on all nodes.</li>
+</ul>
+
+<h3 id="9-content-best-practices">9. Content Best Practices</h3>
+<ul>
+  <li>Clear, actionable messages (what failed, inputs, next step).</li>
+  <li>One responsibility per log line.</li>
+  <li>Stack traces only in <code class="language-plaintext highlighter-rouge">ERROR</code> and once per event.</li>
+  <li>Use <strong>IDs instead of payloads</strong> (store large data externally and reference).</li>
+</ul>
+
+<hr />
+
+<h2 id="example-schema-json">Example Schema (JSON)</h2>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"ts"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-09-03T23:15:42.123Z"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"level"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ERROR"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"service"</span><span class="p">:</span><span class="w"> </span><span class="s2">"payments-api"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"env"</span><span class="p">:</span><span class="w"> </span><span class="s2">"prod"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"region"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sa-east-1"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"host"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ip-10-0-2-15"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"pid"</span><span class="p">:</span><span class="w"> </span><span class="mi">2431</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"trace_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3c9a9f6a2a8f4f3c"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"span_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5e41af02bb1a9e7d"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"correlation_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"req-7f1c1c0d"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"POST"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/v1/charges"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="mi">502</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"latency_ms"</span><span class="p">:</span><span class="w"> </span><span class="mi">312</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"msg"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Upstream gateway timeout"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"upstream"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cards-gw"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"release"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025.09.03-1"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"k8s_pod"</span><span class="p">:</span><span class="w"> </span><span class="s2">"payments-api-7b6d7f5cc9-ktm2x"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+  </main>
+</body>
+
+<script src="/digital-garden/assets/js/sidebar-resize.js"></script>
+<script src="/digital-garden/assets/js/theme-toggle.js"></script>
+
+<!-- Fallback inline script -->
+<script>
+// Función de respaldo
+function toggleTheme() {
+  var html = document.documentElement;
+  var currentTheme = html.getAttribute('data-theme');
+  var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', newTheme);
+  
+  try {
+    localStorage.setItem('theme-preference', newTheme);
+  } catch (e) {}
+  
+}
+
+// Cargar tema guardado
+try {
+  var savedTheme = localStorage.getItem('theme-preference');
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }
+} catch (e) {}
+</script>
+
+</html>
