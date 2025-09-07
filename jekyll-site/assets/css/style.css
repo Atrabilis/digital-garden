@@ -16,6 +16,19 @@
   
     --shadow-1: 0 1px 2px rgba(0,0,0,.05), 0 4px 12px rgba(0,0,0,.05);
   }
+
+  /* Dark mode variables */
+  [data-theme="dark"] {
+    --bg: #0d1117;
+    --bg-alt: #161b22;
+    --text: #c9d1d9;
+    --muted: #8b949e;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent-2: #1f6feb;
+    --link: #58a6ff;
+    --shadow-1: 0 1px 2px rgba(0,0,0,.3), 0 4px 12px rgba(0,0,0,.2);
+  }
   
 
   /* ==========
@@ -327,4 +340,101 @@
     .content{ max-width: 860px; padding: 1rem 1.1rem 2rem; }
   }
   */
+
+  /* ==========
+     Dark Mode Toggle
+     ========== */
+  .theme-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    padding: 0.5rem 0.75rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+
+  .theme-toggle:hover {
+    background: color-mix(in oklab, var(--accent) 8%, transparent);
+    border-color: var(--accent);
+  }
+
+  .theme-toggle__label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .theme-toggle__switch {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background: var(--border);
+    border-radius: 12px;
+    transition: background 0.2s ease;
+  }
+
+  .theme-toggle__switch::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: var(--bg);
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  [data-theme="dark"] .theme-toggle__switch {
+    background: var(--accent);
+  }
+
+  [data-theme="dark"] .theme-toggle__switch::before {
+    transform: translateX(20px);
+  }
+
+  /* Icons for light/dark mode */
+  .theme-toggle__icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+
+  .theme-toggle__icon--sun {
+    position: absolute;
+    left: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .theme-toggle__icon--moon {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  [data-theme="dark"] .theme-toggle__icon--sun {
+    opacity: 0.3;
+  }
+
+  [data-theme="dark"] .theme-toggle__icon--moon {
+    opacity: 1;
+  }
+
+  :root:not([data-theme="dark"]) .theme-toggle__icon--sun {
+    opacity: 1;
+  }
+
+  :root:not([data-theme="dark"]) .theme-toggle__icon--moon {
+    opacity: 0.3;
+  }
   
