@@ -1,3 +1,8 @@
+---
+title: "Common task"
+layout: default
+---
+
 # Git Common Tasks
 
 ## 🔄 Refresh .gitignore
