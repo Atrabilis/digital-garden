@@ -38,3 +38,15 @@ func main() {
 }
 
 ```
+
+## Write API with asyncronous channel to handle errors
+
+```go
+writeAPI := client.WriteAPI(os.Getenv("INFLUXDB_ORG"), os.Getenv("PSDA"))
+errCh := writeAPI.Errors()
+go func() {
+	for err := range errCh {
+		fmt.Println("Error writing to InfluxDB", err)
+	}
+}()
+```
