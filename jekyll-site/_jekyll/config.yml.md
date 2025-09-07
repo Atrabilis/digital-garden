@@ -1,6 +1,7 @@
 ---
 title: "Config.yml"
 layout: default
+excerpt_separator: "<!-- EXCERPT_END -->"
 ---
 
 {% raw %}
@@ -349,3 +350,5 @@ timezone: "America/Santiago"
 - Kramdown with GFM provides rich Markdown features for technical documentation
 - Exclude unnecessary files to speed up builds and reduce output size
 {% endraw %}
+
+<!-- EXCERPT_END -->
