@@ -1,5 +1,5 @@
 # --- Jekyll build output
-jekyll-site/_site/
+_site/
 
 # --- Jekyll caches
 .jekyll-cache/
