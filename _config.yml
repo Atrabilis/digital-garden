@@ -8,6 +8,7 @@ collections:
   go:
     output: true
     permalink: /go/:name/
+    
   good-practices:
     output: true
     permalink: /good-practices/:name/
@@ -26,6 +27,9 @@ collections:
   git:
     output: true
     permalink: /git/:name/
+  backend:
+    output: true
+    permalink: /backend/:name/
 
 
 markdown: kramdown
