@@ -8,7 +8,6 @@ collections:
   go:
     output: true
     permalink: /go/:name/
-    
   good-practices:
     output: true
     permalink: /good-practices/:name/
@@ -30,6 +29,9 @@ collections:
   backend:
     output: true
     permalink: /backend/:name/
+  prompt-engineering:
+    output: true
+    permalink: /prompt-engineering/:name/
 
 
 markdown: kramdown
